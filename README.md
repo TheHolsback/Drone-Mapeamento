@@ -1,0 +1,1 @@
+Link do Vìdeo para compilar Latex localmente: https://youtu.be/Mty0vHb0knI?si=yFR8atI4B6wx5kss 
