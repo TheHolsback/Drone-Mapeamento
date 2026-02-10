@@ -2,28 +2,46 @@
 
 \section{Microcontroladores}
 \subsection{Definição}
+Um microcontrolador é um sistema computacional completo integrado em um único circuito, tipicamente composto por unidade central de processamento (CPU), memórias de programa e dados, e periféricos de entrada/saída, sendo projetado para aplicações embarcadas com restrições de custo, energia e tempo real. Em contraste com microprocessadores de propósito geral, microcontroladores tendem a incorporar recursos de temporização, aquisição de sinais e comunicação serial no próprio chip, reduzindo a necessidade de componentes externos e simplificando o projeto de hardware e firmware. \cite{valvanoCortexM2019,mazidiPIC2008}
+
 \subsection{Módulos integrados}
+A arquitetura típica de um microcontrolador inclui, além da CPU e das memórias (Flash/ROM para código e SRAM para variáveis), módulos de temporização e contagem (timers/counters), geradores de PWM para acionamento de atuadores, conversores analógico--digitais (ADC) para leitura de sensores analógicos, e interfaces de comunicação como UART, SPI e I\textsuperscript{2}C para integração com sensores digitais e periféricos externos. Em cenários de sistemas ciberfísicos, esses módulos permitem amostragem periódica, timestamping, controle de atuadores e transmissão confiável de telemetria, formando a base para aquisição e processamento de sinais em tempo discreto. \cite{valvanoCortexM2019,mazidiPIC2008}
 
 \section{Drone}
 \subsection{Arquitetura geral}
+Um drone multirrotor pode ser modelado como um corpo rígido atuado por forças e torques gerados por múltiplos rotores, geralmente comandados por um controlador de voo que executa estimação de estados (atitude e, quando aplicável, posição/velocidade) e leis de controle em malha fechada. Em termos de arquitetura, é comum separar os subsistemas em: geração de empuxo (motores/ESC/hélices), sensoriamento (IMU, barômetro, GNSS e/ou sensores de distância), processamento embarcado (microcontrolador/MCU ou SoC) e alimentação (bateria e reguladores), com rotinas de controle em diferentes frequências (por exemplo, atitude em alta taxa e navegação em menor taxa). \cite{beardMcLain2012}
+
 \subsection{Eixos de controle}
+A dinâmica e o controle de multirrotores são frequentemente descritos por três eixos rotacionais do corpo (rolagem/roll, arfagem/pitch e guinada/yaw) e pelo eixo de empuxo total (thrust), que determina a aceleração do centro de massa. O controle de atitude busca estabilizar e rastrear referências de roll, pitch e yaw por meio de torques, enquanto o controle de altitude/velocidade vertical atua principalmente via empuxo total. Em uma formulação padrão, roll e pitch inclinam o vetor de empuxo, acoplando diretamente a atitude à aceleração translacional no referencial inercial. \cite{beardMcLain2012}
 
 \section{Sensores embarcados}
-
 \subsection{LiDAR}
+Sensores LiDAR estimam distâncias a partir do princípio de tempo de voo (time-of-flight) de pulsos laser, retornando medições de alcance em função de ângulos de varredura, o que permite representar o ambiente como um conjunto de pontos em um plano (LiDAR 2D) ou em volume (LiDAR 3D). Em aplicações robóticas com varredura angular, o LiDAR fornece pares (ângulo, distância) com resolução angular definida pelo mecanismo de varredura e precisão dependente do alvo e do alcance, sendo amplamente utilizado em mapeamento e detecção de obstáculos. \cite{hokuyoUTM30LX}
+
 \subsection{Unidade de Medição Inercial (IMU)}
+Uma IMU combina acelerômetros e giroscópios (e, em muitos casos, magnetômetro), medindo respectivamente aceleração específica e velocidade angular do corpo, o que viabiliza estimação de atitude e de variações de movimento em altas taxas de amostragem. Entretanto, a integração temporal de sinais inerciais está sujeita a deriva (drift) por vieses, ruído e erros de calibração, exigindo modelagem cuidadosa e, frequentemente, fusão sensorial para limitar o crescimento do erro. \cite{tittertonWeston2004,groves2013}
 
 \section{Referenciais e sistemas de coordenadas}
 \subsection{Referencial do corpo}
+O referencial do corpo (body frame) é rigidamente acoplado ao drone e se move com ele, sendo útil para expressar medições da IMU e forças/torques gerados pelos atuadores. Nesse referencial, grandezas como velocidade angular e aceleração específica são naturalmente medidas, e a orientação do corpo em relação ao mundo é descrita por uma rotação pertencente ao grupo $SO(3)$. \cite{beardMcLain2012,diebel2006}
+
 \subsection{Referencial do mundo}
+O referencial do mundo (world/inertial frame) é tomado como fixo no ambiente, servindo para expressar posição, velocidade e aceleração do drone em relação ao cenário. A escolha do referencial inercial e suas convenções (por exemplo, eixos $X,Y$ no plano horizontal e $Z$ vertical) impacta diretamente a interpretação de sinais e a implementação de transformações entre corpo e mundo, especialmente quando se deseja mapear medições de distância para coordenadas globais. \cite{siciliano2009,beardMcLain2012}
 
 \section{Aceleração e posição inercial}
 \subsection{Aceleração específica}
+Acelerômetros não medem diretamente a aceleração linear absoluta do corpo; eles medem a aceleração específica, isto é, a aceleração não gravitacional por unidade de massa, o que inclui o efeito da gravidade dependendo do estado de movimento e orientação do sensor. Assim, para recuperar aceleração translacional no referencial inercial, é necessário transformar a medição do corpo para o mundo e compensar a contribuição gravitacional de acordo com a convenção adotada, sob pena de introduzir erro sistemático que cresce rapidamente após integrações sucessivas. \cite{tittertonWeston2004,groves2013}
+
 \subsection{Relação entre aceleração, velocidade e posição}
+Em cinemática contínua, a relação fundamental estabelece que a aceleração é a derivada temporal da velocidade e a velocidade é a derivada temporal da posição, de modo que a estimativa de velocidade e posição pode ser obtida por integrações sucessivas da aceleração. Em implementação discreta, essa operação implica aproximar integrais por somatórios numéricos, tornando a qualidade da estimativa altamente sensível a ruídos, vieses e ao método de integração escolhido, o que motiva o uso de técnicas numéricas adequadas e, quando possível, correções via medições externas. \cite{groves2013,burdenFaires2016}
 
 \section{Matrizes de rotação}
 \subsection{Ângulos de Euler (roll, pitch e yaw)}
+Uma forma clássica de parametrizar a orientação de um corpo rígido é por ângulos de Euler (roll, pitch e yaw), que representam uma sequência de rotações elementares em eixos definidos. Embora sejam intuitivos, ângulos de Euler apresentam singularidades (gimbal lock) para certas configurações e dependem da ordem de composição (por exemplo, ZYX), aspectos que devem ser explicitados para garantir consistência na conversão entre representações e na implementação computacional. \cite{diebel2006,beardMcLain2012}
+
 \subsection{Transformações de coordenadas}
+Transformações entre corpo e mundo são realizadas por matrizes de rotação $\mathbf{R}\in SO(3)$, que preservam normas e ângulos e permitem mapear vetores entre referenciais por multiplicação matricial. Em robótica e navegação, é comum expressar a transformação como $\mathbf{v}_{W}=\mathbf{R}_{W}^{B}\mathbf{v}_{B}$, onde a notação explicita o sentido da rotação, sendo essencial manter consistência notacional para evitar inversões indevidas e erros de sinal em etapas como compensação de gravidade e projeção de medições no espaço. \cite{siciliano2009,diebel2006}
 
 \section{Integração numérica}
 \subsection{Métodos de integração para sinais discretos}
+Para sinais amostrados, integrais são aproximadas por métodos numéricos como Euler explícito (primeira ordem) e regra do trapézio (segunda ordem), que assumem comportamento local do sinal entre amostras e produzem estimativas recursivas em tempo discreto. A regra do trapézio é frequentemente preferida para integração de dados experimentais por reduzir o erro de truncamento em relação ao Euler, embora ambos permaneçam sensíveis a ruído e vieses, o que reforça a necessidade de filtragem e modelagem de incertezas quando se integra aceleração para obter velocidade e posição. \cite{burdenFaires2016}
