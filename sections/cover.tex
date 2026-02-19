@@ -4,7 +4,7 @@
     \begin{center}
         \vspace*{1cm}
         
-        {\LARGE \textbf{Mapeamento 3D de Cavernas com Drone em Ambiente Sem GPS: Fusão LiDAR-IMU para Estimação de Trajetória e Reconstrução}}
+        {\LARGE \textbf{Mapeamento 3D de Cavernas com Drone em Ambiente Sem GPS: Fusão LiDAR-IMU para Reconstrução}}
         
         \vspace{0.5cm}
         TRABALHO DE CONCLUSÃO DE CURSO
@@ -21,15 +21,7 @@
 \noindent{
 {
     {\bf Resumo:} 
-    Este trabalho apresenta o desenvolvimento de uma metodologia para mapeamento tridimensional de ambientes internos utilizando um drone operando sem sinal de GPS, com aplicação voltada para ambientes confinados, como cavernas. A proposta baseia-se na integração de sensores embarcados, especialmente uma Unidade de Medição Inercial (IMU) e sensores LiDAR, combinando dados de aceleração, atitude e distância para reconstrução espacial do ambiente em forma de nuvem de pontos. 
-
-O sistema utiliza princípios das equações do movimento newtoniano para estimar a posição do drone ao longo do tempo, realizando integrações sucessivas da aceleração após a correção das inclinações do veículo. Para isso, as acelerações medidas no referencial do corpo são convertidas para o referencial do mundo por meio de matrizes de rotação baseadas em roll, pitch e yaw, permitindo remover corretamente a influência da gravidade e obter o deslocamento real do equipamento. 
-
-A partir da estimativa de posição do drone, os pontos medidos pelo LiDAR passam por transformações entre referenciais — LiDAR e drone possibilitando a determinação da posição global de cada ponto capturado. Esse processo resulta na construção de uma nuvem de pontos capaz de representar o ambiente tridimensionalmente com maior precisão. 
-
-Além da modelagem matemática, o projeto contempla a definição da arquitetura de hardware embarcado, incluindo microcontrolador, sensores, módulos de armazenamento, sistema de alimentação e estrutura física, considerando critérios de peso, consumo energético e autonomia necessários para execução do mapeamento. 
-
-Como resultado esperado, o trabalho busca demonstrar a viabilidade de uma solução de baixo custo e independente de infraestrutura externa para mapeamento 3D, contribuindo para aplicações em exploração, inspeção e documentação de ambientes onde sistemas tradicionais de posicionamento não estão disponíveis.
+    Este trabalho apresenta o desenvolvimento de uma metodologia para mapeamento tridimensional de ambientes internos utilizando um drone operando sem sinal de GPS, com aplicação voltada para ambientes confinados, como cavernas. A proposta baseia-se na integração de sensores embarcados, especialmente uma Unidade de Medição Inercial (IMU) e sensores LiDAR, combinando dados de aceleração, atitude e distância para reconstrução espacial do ambiente em forma de nuvem de pontos.
     }
 }
 \vfill
