@@ -21,7 +21,15 @@
 \noindent{
 {
     {\bf Resumo:} 
-    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Adipiscing elit pellentesque habitant morbi tristique senectus et netus et. Velit sed ullamcorper morbi tincidunt ornare. Tempor commodo ullamcorper a lacus vestibulum sed arcu non. Egestas quis ipsum suspendisse ultrices gravida dictum. Sed risus pretium quam vulputate dignissim. Tristique risus nec feugiat in fermentum posuere urna nec.
+    Este trabalho apresenta o desenvolvimento de uma metodologia para mapeamento tridimensional de ambientes internos utilizando um drone operando sem sinal de GPS, com aplicação voltada para ambientes confinados, como cavernas. A proposta baseia-se na integração de sensores embarcados, especialmente uma Unidade de Medição Inercial (IMU) e sensores LiDAR, combinando dados de aceleração, atitude e distância para reconstrução espacial do ambiente em forma de nuvem de pontos. 
+
+O sistema utiliza princípios das equações do movimento newtoniano para estimar a posição do drone ao longo do tempo, realizando integrações sucessivas da aceleração após a correção das inclinações do veículo. Para isso, as acelerações medidas no referencial do corpo são convertidas para o referencial do mundo por meio de matrizes de rotação baseadas em roll, pitch e yaw, permitindo remover corretamente a influência da gravidade e obter o deslocamento real do equipamento. 
+
+A partir da estimativa de posição do drone, os pontos medidos pelo LiDAR passam por transformações entre referenciais — LiDAR e drone possibilitando a determinação da posição global de cada ponto capturado. Esse processo resulta na construção de uma nuvem de pontos capaz de representar o ambiente tridimensionalmente com maior precisão. 
+
+Além da modelagem matemática, o projeto contempla a definição da arquitetura de hardware embarcado, incluindo microcontrolador, sensores, módulos de armazenamento, sistema de alimentação e estrutura física, considerando critérios de peso, consumo energético e autonomia necessários para execução do mapeamento. 
+
+Como resultado esperado, o trabalho busca demonstrar a viabilidade de uma solução de baixo custo e independente de infraestrutura externa para mapeamento 3D, contribuindo para aplicações em exploração, inspeção e documentação de ambientes onde sistemas tradicionais de posicionamento não estão disponíveis.
     }
 }
 \vfill
