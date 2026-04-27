@@ -10,3 +10,5 @@
 *.fdb_latexmk
 *.synctex.gz
 *.run.xml
+
+.venv
