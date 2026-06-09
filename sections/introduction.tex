@@ -1,77 +1,42 @@
 \chapter{Introdução}
+\label{cap:introducao}
 
-Escrever bem é uma arte que exige muita técnica e dedicação. Há vários bons livros
-sobre como escrever uma boa dissertação ou tese. Um dos trabalhos pioneiros e mais
-conhecidos nesse sentido é o livro de Umberto Eco \cite{eco:09} intitulado 
-\textit{Como se faz uma tese}; é uma leitura bem interessante mas, como foi escrito 
-em 1977 e é voltado para teses de graduação na Itália, não se aplica tanto a nós.
+O mapeamento tridimensional de ambientes confinados é relevante para inspeção, documentação e exploração de locais onde a presença humana pode ser arriscada ou operacionalmente custosa. Cavernas, galerias, áreas industriais internas e regiões de difícil acesso têm em comum a baixa disponibilidade de infraestrutura externa de posicionamento. Em particular, sistemas baseados em GPS tendem a apresentar indisponibilidade ou degradação severa nesses cenários, exigindo métodos de localização relativa baseados em sensores embarcados \cite{thrun2005probabilistic,beardMcLain2012}.
 
-Para a escrita de textos em Ciência da Computação, o livro de Justin Zobel, 
-\textit{Writing for Computer Science} \cite{zobel:04} é uma leitura obrigatória. 
-O livro \textit{Metodologia de Pesquisa para Ciência da Computação} de 
-Raul Sidnei Wazlawick \cite{waz:09} também merece uma boa lida.
-Já para a área de Matemática, dois livros recomendados são o de Nicholas Higham,
-\textit{Handbook of Writing for Mathematical Sciences} \cite{Higham:98} e o do criador
-do \TeX, Donald Knuth, juntamente com Tracy Larrabee e Paul Roberts, 
-\textit{Mathematical Writing} \cite{Knuth:96}.
+Uma solução direta seria integrar as acelerações medidas por uma Unidade de Medição Inercial (IMU) para obter velocidade e posição. Entretanto, essa abordagem isolada é limitada: pequenos vieses, ruídos de quantização e erros de atitude são integrados ao longo do tempo, produzindo deriva crescente na estimativa de posição \cite{tittertonWeston2004,groves2013principles,farrell2008aided}. Por outro lado, sensores ópticos de fluxo medem deslocamentos relativos da superfície observada entre quadros consecutivos, fornecendo uma fonte direta de odometria no plano observado, especialmente útil em navegação indoor e em ambientes sem GPS \cite{lucasKanade1981,pixart2017pmw3901}.
 
-O uso desnecessário de termos em lingua estrangeira deve ser evitado. No entanto,
-quando isso for necessário, os termos devem aparecer \emph{em itálico}.
+Este trabalho adota uma arquitetura híbrida. O sensor óptico de fluxo é tratado como fonte primária de deslocamento no plano horizontal, com correção de escala pela altura medida por um sensor ToF. A IMU complementa essa estimativa ao fornecer atitude do drone e ao preencher pequenos intervalos nos quais o sensor óptico não registra evento de movimento. O LiDAR 2D, por sua vez, fornece distância, ângulo e intensidade de retorno para cada ponto de varredura. Com a posição e a atitude estimadas, cada ponto LiDAR é transformado do referencial local do sensor para o referencial global, resultando em uma nuvem de pontos tridimensional.
 
-\begin{footnotesize}
-\begin{verbatim}
-Modos de citação:
-indesejável: [AF83] introduziu o algoritmo ótimo.
-indesejável: (Andrew e Foster, 1983) introduziram o algoritmo ótimo.
-certo : Andrew e Foster introduziram o algoritmo ótimo [AF83].
-certo : Andrew e Foster introduziram o algoritmo ótimo (Andrew e Foster, 1983).
-certo : Andrew e Foster (1983) introduziram o algoritmo ótimo.
-\end{verbatim}
-\end{footnotesize}
+\section{Problema de pesquisa}
 
-Uma prática recomendável na escrita de textos é descrever as legendas das
-figuras e tabelas em forma auto-contida: as legendas devem ser razoavelmente
-completas, de modo que o leitor possa entender a figura sem ler o texto onde a
-figura ou tabela é citada.  
-
-Apresentar os resultados de forma simples, clara e completa é uma tarefa que
-requer inspiração. Nesse sentido, o livro de Edward Tufte \cite{tufte01:visualDisplay},
-\textit{The Visual Display of Quantitative Information}, serve de ajuda na 
-criação de figuras que permitam entender e interpretar dados/resultados de forma
-eficiente.
-
-\section{Considerações Preliminares}
-
-Como considerações preliminares, entende-se que o projeto consiste no desenvolvimento de um sistema dedicado à aquisição de dados espaciais de alta precisão, visando à geração de nuvens de pontos detalhadas em ambientes confinados. A proposta fundamenta-se na integração de sensores embarcados, permitindo a reconstrução tridimensional desses ambientes com elevado nível de fidelidade.
-
-A aplicação futura do sistema está direcionada, principalmente, para o mapeamento de cavidades, como cavernas, bem como para atividades de inspeção e levantamento em ambientes de difícil acesso, incluindo operações no setor minerador e em áreas correlatas.
+O problema investigado pode ser resumido na seguinte pergunta: como estimar a posição relativa de uma plataforma móvel em ambiente sem GPS e usar essa pose para transformar medições LiDAR em uma nuvem de pontos global coerente? A resposta proposta combina três fontes de informação com papéis distintos: fluxo óptico para deslocamento horizontal, IMU para orientação e propagação em intervalos sem medição óptica, e LiDAR para geometria do ambiente.
 
 \section{Objetivos}
 
-O objetivo geral deste trabalho é documentar e demonstrar os ganhos de eficiência,
-precisão e facilidade operacional de um sistema de mapeamento tridimensional
-baseado em tecnologia LiDAR e no processamento de nuvens de pontos de alta
-densidade, com foco na aplicação em cavidades e ambientes de difícil acesso.
+O objetivo geral deste trabalho é desenvolver e documentar um fluxo de aquisição e processamento capaz de estimar a localização relativa de um drone em ambiente sem GPS e gerar uma nuvem de pontos tridimensional no referencial global a partir da combinação de sensor óptico, IMU e LiDAR.
 
 Os objetivos específicos são:
 
 \begin{itemize}
-    \item Projetar e validar uma solução dedicada de aquisição, armazenamento e
-    processamento de dados espaciais embarcada em plataforma móvel.
-    \item Estruturar e avaliar um fluxo de transformação de coordenadas e geração
-    de nuvem de pontos para reconstrução confiável do ambiente.
-    \item Verificar, em testes controlados, a viabilidade técnica da solução
-    quanto à qualidade do mapeamento.
-    \item Evidenciar a redução de riscos operacionais, custos de execução e
-    necessidade de equipes extensas em campo, em comparação com métodos
-    tradicionais de levantamento.
+    \item Integrar em uma plataforma embarcada sensores de fluxo óptico, ToF, IMU e LiDAR, registrando os dados em formato sincronizado por timestamp.
+    \item Converter e filtrar os sinais inerciais para estimar atitude e aceleração linear no referencial global.
+    \item Estimar a trajetória no plano $XY$ usando fluxo óptico como fonte primária e integração inercial apenas nos intervalos sem eventos do sensor óptico.
+    \item Processar os pontos LiDAR com filtros físicos e estatísticos, convertendo distância e ângulo para coordenadas locais.
+    \item Transformar a nuvem local do LiDAR para o referencial global usando posição, atitude e hipóteses de montagem do sensor.
+    \item Identificar limitações experimentais e parâmetros que ainda dependem de calibração final.
 \end{itemize}
 
 \section{Contribuições}
 
-As principais contribuições deste trabalho são as seguintes:
+As principais contribuições deste trabalho são:
 
 \begin{itemize}
-    \item Item 1: Lacus vestibulum sed arcu non odio euismod lacinia. Nulla posuere sollicitudin aliquam ultrices sagittis. Aliquam ut porttitor leo a diam. Elit at imperdiet dui accumsan sit amet nulla facilisi morbi. Parturient montes nascetur ridiculus mus mauris vitae ultricies leo.
-    \item Item 2: Nulla pellentesque dignissim enim sit amet venenatis urna cursus. Id eu nisl nunc mi ipsum faucibus. Quisque id diam vel quam elementum pulvinar etiam non. Quis lectus nulla at volutpat diam ut venenatis tellus in. Sed euismod nisi porta lorem mollis aliquam ut. Dui nunc mattis enim ut. Nulla pharetra diam sit amet nisl suscipit adipiscing.
+    \item Definição de uma arquitetura de sensoriamento para navegação relativa em ambiente sem GPS, usando fluxo óptico como odometria primária e IMU como apoio inercial.
+    \item Definição de um fluxo de processamento para conversão de unidades, calibração de viés do giroscópio, filtragem Butterworth, estimação de atitude por Madgwick e fusão de posição no plano $XY$.
+    \item Definição de um fluxo de geração de nuvem global que considera a rotação do LiDAR principal em torno do eixo $Y$ do drone e aplica filtros automáticos de intensidade, distância e continuidade de pose.
+    \item Organização das hipóteses e limitações do experimento, especialmente a ausência de odometria vertical dedicada e a necessidade de validação da calibração extrínseca entre sensores.
 \end{itemize}
+
+\section{Organização do trabalho}
+
+O Capítulo~\ref{cap:conceitos} apresenta os conceitos de sensores embarcados, navegação inercial, fluxo óptico, atitude, transformações de coordenadas e filtragem usados no projeto. O Capítulo~\ref{cap:metodologia} descreve a plataforma, os dados coletados e o método de processamento adotado. O Capítulo~\ref{cap:resultados_conclusao} apresenta a implementação, os resultados obtidos, as limitações e os trabalhos futuros.

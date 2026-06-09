@@ -4,7 +4,7 @@
     \begin{center}
         \vspace*{1cm}
         
-        {\LARGE \textbf{Mapeamento 3D de Cavernas com Drone em Ambiente Sem GPS: Fusão LiDAR-IMU para Reconstrução}}
+        {\LARGE \textbf{Mapeamento 3D de Ambientes sem GPS com Drone: Integração de Fluxo Óptico, IMU e LiDAR}}
         
         \vspace{0.5cm}
         TRABALHO DE CONCLUSÃO DE CURSO
@@ -20,8 +20,8 @@
     \vspace{1cm}
 \noindent{
 {
-    {\bf Resumo:} 
-    Este trabalho apresenta o desenvolvimento de uma metodologia para mapeamento tridimensional de ambientes internos utilizando um drone operando sem sinal de GPS, com aplicação voltada para ambientes confinados, como cavernas. A proposta baseia-se na integração de sensores embarcados, especialmente uma Unidade de Medição Inercial (IMU) e sensores LiDAR, combinando dados de aceleração, atitude e distância para reconstrução espacial do ambiente em forma de nuvem de pontos.
+    {\bf Resumo:}
+    Este trabalho apresenta uma metodologia de aquisição e processamento para localização relativa e geração de nuvem de pontos em ambientes sem sinal de GPS. A abordagem combina sensor óptico de fluxo, sensor de distância ToF, duas unidades de medição inercial e LiDAR 2D. O fluxo óptico fornece a odometria primária no plano horizontal, a IMU estima atitude e preenche intervalos sem medição óptica, e o LiDAR é transformado do referencial local do drone para o referencial global para reconstrução tridimensional do ambiente.
     }
 }
 \vfill

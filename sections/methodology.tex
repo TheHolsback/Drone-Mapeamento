@@ -1,251 +1,238 @@
 \chapter{Metodologia}
+\label{cap:metodologia}
 
-\section{Visão geral da metodologia}
+\section{Visão geral}
 
-A metodologia proposta baseia-se em uma abordagem integrada de sensoriamento inercial e medição de distância para reconstrução tridimensional de ambientes confinados. O fluxo metodológico segue as seguintes etapas:
+A metodologia foi organizada em duas etapas complementares. A primeira estima a posição e a atitude do drone a partir de fluxo óptico, ToF e IMU. A segunda usa a pose estimada para transformar os pontos do LiDAR principal para o referencial global.
+
+O fluxo geral é:
 
 \begin{enumerate}
-    \item Configuração de sensores inerciais e LiDAR em plataforma móvel controlada
-    \item Coleta de dados em ambiente de referência com medições previamente conhecidas
-    \item Validação de qualidade dos dados através de análise de intensidade e distribuição
-    \item Processamento de dados brutos com transformação de referenciais
-    \item Estimativa de posição inercial por integração dupla de aceleração
-    \item Geração da nuvem de pontos tridimensional com compensação de atitude
+    \item aquisição embarcada de IMU, LiDAR, ToF e fluxo óptico;
+    \item conversão das leituras inerciais para unidades físicas;
+    \item calibração de viés do giroscópio e filtragem dos sinais;
+    \item estimação de atitude por Madgwick;
+    \item acumulação de deslocamento óptico no plano $XY$, corrigido por ToF;
+    \item preenchimento dos intervalos sem evento de fluxo óptico por propagação inercial;
+    \item associação da pose estimada a cada medição LiDAR;
+    \item filtragem e transformação dos pontos LiDAR para nuvem global.
 \end{enumerate}
 
-\section{Plataforma de desenvolvimento}
+\section{Plataforma de aquisição}
 
-\subsection{Ambiente de testes}
+A plataforma de testes foi montada inicialmente em base móvel terrestre, permitindo validar aquisição, sincronismo e processamento com menor risco operacional antes da migração para voo. Os sensores foram fixados ao corpo da plataforma, de modo que as transformações entre LiDAR, IMU, sensor óptico e corpo do drone pudessem ser tratadas como transformações rígidas.
 
-A plataforma de testes foi montada em ambiente interno controlado, permitindo medições de referência precisas e repetibilidade dos experimentos. O ambiente selecionado é um espaço seguro com dimensões conhecidas e sem interferências eletromagnéticas significativas que pudessem afetar as medições dos sensores.
-
-\subsection{Drone terrestre como plataforma inicial}
-
-A primeira etapa de validação utiliza um drone terrestre (carro de controle remoto modificado) como plataforma portadora dos sensores. Esta escolha se justifica por permitir:
-
-\begin{itemize}
-    \item Testes controlados em ambiente estruturado
-    \item Fácil reposicionamento do drone em pontos de referência
-    \item Redução de riscos operacionais comparado a testes aéreos
-    \item Validação de firmware e sincronismo de sensores antes de migração para plataforma aérea
-\end{itemize}
-
-Os sensores são montados rigidamente no chassis do drone, garantindo que toda medição seja feita sempre no mesmo ponto de referência relativo à plataforma. O posicionamento é crítico para a transformação LiDAR $\rightarrow$ Corpo do drone.
-
-\section{Coleta de dados}
-
-\subsection{Configuração dos sensores}
-
-O sistema utiliza a seguinte configuração de sensores:
-
-\begin{itemize}
-    \item \textbf{Microcontrolador:} Raspberry Pi Pico (RP2040) operando em 125 MHz com sincronização de sensores por timestamp em microsegundos
-    \item \textbf{Sensores Inerciais:} 2x MPU-6050 conectadas via I2C (portos I2C0 e I2C1), com taxa de amostragem de aproximadamente 100 Hz
-    \item \textbf{Sensor LiDAR:} LD06 conectado via UART serial a 230400 baud, fornecendo 12 pontos por pacote com período de amostragem de aproximadamente 10 ms
-    \item \textbf{Armazenamento:} Cartão SD em interface SPI para gravação contínua dos dados
-\end{itemize}
-
-\subsection{Ambiente controlado de coleta}
-
-A coleta de dados foi realizada em ambiente de referência com quatro pontos de medição estabelecidos nos ângulos cardinais: $0°$, $90°$, $180°$ e $270°$, posicionados a distâncias conhecidas do sensor LiDAR.
-
-\subsubsection{Valores de referência esperados}
-
-Os seguintes valores de distância foram pré-medidos para servir como referência de validação:
+O sistema de aquisição embarcada integra os seguintes elementos:
 
 \begin{table}[H]
     \centering
-    \caption{Distâncias de referência para validação do LiDAR}
-    \begin{tabularx}{0.5\textwidth}{c|c}
+    \caption{Componentes utilizados na aquisição embarcada}
+    \begin{tabularx}{\textwidth}{l|l|X}
         \hline
-        \textbf{Ângulo} & \textbf{Distância Esperada} \\
+        \textbf{Componente} & \textbf{Interface} & \textbf{Função no sistema} \\
         \hline
-        $0^{\circ}$ & 1700 mm \\
-        $90^{\circ}$ & 2000 mm \\
-        $180^{\circ}$ & 1300 mm \\
-        $270^{\circ}$ & 1000 mm \\
+        Raspberry Pi Pico / RP2040 & GPIO, I2C, SPI, UART & Coordenação da leitura dos sensores, timestamp e gravação em cartão SD \\
+        2x IMU da família MPU & I2C0 e I2C1 & Aceleração e velocidade angular em três eixos \\
+        VL53L1X & I2C compartilhado com a IMU 1 & Distância ToF usada para corrigir a escala do fluxo óptico \\
+        PMW3901 & SPI1 & Deslocamento incremental por fluxo óptico no plano observado \\
+        LD06 & UART1 a 230400 baud & Distância, ângulo e intensidade dos pontos LiDAR \\
+        Cartão SD & SPI0 & Registro contínuo dos dados em CSV \\
         \hline
     \end{tabularx}
-    \label{tab:ref_lidar}
+    \label{tab:componentes_aquisicao}
 \end{table}
 
-\subsubsection{Protocolo de medição}
+Há uma inconsistência nominal entre documentos do projeto: algumas anotações descrevem as IMUs como MPU-6050, enquanto a versão de aquisição mais recente menciona MPU6500. Como as escalas usadas correspondem às configurações $\pm2g$ e $\pm250^{\circ}/s$ comuns à família, o processamento permanece válido, mas o modelo físico exato deve ser confirmado na versão final da lista de materiais.
 
-Para cada ângulo de referência, foi realizado um período de amostragem de \textbf{1 minuto} com o drone posicionado fixamente. Ao final da coleta, foram obtidas um total de \textbf{6.584 aferições} distribuídas entre os 4 ângulos, o que permite análise estatística robusta da distribuição de medições.
+\section{Dados coletados}
 
-\section{Dados obtidos}
-
-\subsection{Descrição das variáveis coletadas}
-
-O sistema coleta 15 variáveis por ciclo de amostragem, estruturadas conforme apresentado na Tabela~\ref{tab:variaveis_coletadas}:
+O conjunto bruto de dados possui 19 colunas. Cada pacote LiDAR contém 12 pontos; para cada ponto salvo, o sistema embarcado registra o mesmo timestamp e as leituras mais recentes dos demais sensores. A estrutura é apresentada na Tabela~\ref{tab:variaveis_coletadas}.
 
 \begin{table}[H]
     \centering
-    \caption{Variáveis coletadas em cada ciclo de amostragem}
+    \caption{Variáveis registradas no CSV bruto}
     \begin{tabularx}{\textwidth}{l|l|X}
         \hline
         \textbf{Variável} & \textbf{Fonte} & \textbf{Descrição} \\
         \hline
-        $tempo_{us}$ & Relógio & Timestamp em microsegundos \\
-        $a_{x1}, a_{y1}, a_{z1}$ & IMU 1 & Aceleração nos 3 eixos da IMU 1 \\
-        $g_{x1}, g_{y1}, g_{z1}$ & IMU 1 & Velocidade angular nos 3 eixos da IMU 1 \\
-        $a_{x2}, a_{y2}, a_{z2}$ & IMU 2 & Aceleração nos 3 eixos da IMU 2 \\
-        $g_{x2}, g_{y2}, g_{z2}$ & IMU 2 & Velocidade angular nos 3 eixos da IMU 2 \\
-        $\theta_{lidar}$ & LiDAR & Ângulo de varredura (0° a 360°) \\
-        $r_{lidar}$ & LiDAR & Distância medida (unidades de 0.25 mm) \\
-        $I_{lidar}$ & LiDAR & Intensidade do retorno laser (0--255) \\
+        \texttt{tempo\_us} & RP2040 & Timestamp em microssegundos obtido por \texttt{micros()} \\
+        \texttt{ax1}, \texttt{ay1}, \texttt{az1} & IMU 1 & Acelerações brutas nos três eixos \\
+        \texttt{gx1}, \texttt{gy1}, \texttt{gz1} & IMU 1 & Velocidades angulares brutas nos três eixos \\
+        \texttt{ax2}, \texttt{ay2}, \texttt{az2} & IMU 2 & Acelerações brutas nos três eixos \\
+        \texttt{gx2}, \texttt{gy2}, \texttt{gz2} & IMU 2 & Velocidades angulares brutas nos três eixos \\
+        \texttt{angle} & LD06 & Ângulo LiDAR em centésimos de grau \\
+        \texttt{distance} & LD06 & Distância LiDAR em milímetros na base processada \\
+        \texttt{intensity} & LD06 & Intensidade do retorno LiDAR, de 0 a 255 \\
+        \texttt{tof\_mm} & VL53L1X & Distância ToF em milímetros \\
+        \texttt{flow\_dx}, \texttt{flow\_dy} & PMW3901 & Deslocamentos incrementais do sensor óptico, em centímetros após escala embarcada \\
         \hline
     \end{tabularx}
     \label{tab:variaveis_coletadas}
 \end{table}
 
-\subsection{Validação da qualidade do LiDAR}
+A base processada contém 6.241 linhas, 521 timestamps distintos e duração aproximada de $52{,}07~\text{s}$. Esses valores são usados apenas para caracterizar o ensaio; métricas de acurácia absoluta dependem de medições externas de referência que ainda não foram consolidadas.
 
-Com o objetivo de garantir a qualidade das medições do LiDAR, realizou-se uma análise estatística detalhada dos 6.584 pontos coletados durante os testes de referência. As análises incluíram:
+\section{Pré-processamento da IMU}
 
-\begin{itemize}
-    \item Número de dados por ângulo de teste
-    \item Distribuição normal da distância aferida (teste de normalidade por ângulo)
-    \item Distribuição da intensidade de retorno
-    \item Correlação entre valores discrepantes (outliers) e intensidade do sinal
-\end{itemize}
-
-\subsubsection{Filtro de intensidade}
-
-Os gráficos de distribuição revelaram uma correlação clara entre intensidade de sinal e confiabilidade da medição: inliers (pontos válidos) concentram-se predominantemente acima de 223 na escala de intensidade, enquanto outliers distribuem-se por todas as faixas, com prevalência maior em baixa intensidade. Consequentemente, estabeleceu-se o seguinte critério de filtragem:
+Timestamps duplicados são removidos para construir uma série temporal única de pose. Em seguida, calcula-se:
 
 \begin{equation}
-\text{Aceitar ponto LiDAR se: } I_{lidar} \geq 223
+t_i = \frac{t_{us,i}-t_{us,0}}{10^6},
+\qquad
+\Delta t_i = t_i-t_{i-1},
+\qquad
+f_s \approx \frac{1}{\operatorname{mediana}(\Delta t_i)}.
+\label{eq:tempo_metodologia}
 \end{equation}
 
-Este limiar garante rejeição consistente de medições ruidosas sem eliminar dados válidos em excesso.
+As acelerações e velocidades angulares são convertidas conforme a Equação~\ref{eq:escala_imu}. Amostras saturadas são marcadas quando qualquer eixo bruto atinge magnitude maior ou igual a 32600 LSB. Essa marcação é diagnóstica e não é usada para remover automaticamente linhas no processamento atual.
 
-\section{Processamento dos dados}
+\subsection{Calibração e filtragem}
 
-\subsection{Transformação de coordenadas}
-
-O sistema requer transformações sucessivas para converter dados dos sensores (originalmente em referenciais do corpo do drone) para o referencial global fixo no ambiente. A sequência é:
+A janela inicial de $T_{calib}=5~\text{s}$ é assumida como repouso. Nela, o viés médio do giroscópio é estimado e subtraído:
 
 \begin{equation}
-\text{LiDAR} \rightarrow \text{Corpo do Drone} \rightarrow \text{Referencial Global (Mundo)}
+\hat{\mathbf{b}}_{\omega} =
+\frac{1}{N_c}\sum_{i=1}^{N_c}\tilde{\boldsymbol{\omega}}_i,
+\qquad
+\boldsymbol{\omega}_{corr,i} =
+\tilde{\boldsymbol{\omega}}_i-\hat{\mathbf{b}}_{\omega}.
+\label{eq:bias_giro}
 \end{equation}
 
-\subsubsection{Transformação de aceleração inercial}
+O acelerômetro não tem viés subtraído nessa versão do método, pois sua função principal é alimentar a estimativa de atitude e fornecer apoio curto nos intervalos sem medição óptica. Após a calibração do giroscópio, acelerômetros e giroscópios passam por filtro Butterworth passa-baixa de quarta ordem com frequência de corte de $5~\text{Hz}$.
 
-As acelerações medidas pela IMU encontram-se no referencial do corpo do drone. Para obter aceleração no referencial global, é necessário:
+\subsection{Média das duas IMUs}
+
+As duas IMUs são montadas no mesmo corpo rígido. Usa-se a média simples entre sensores:
+
+\begin{equation}
+\bar{\mathbf{a}} =
+\frac{\mathbf{a}_1+\mathbf{a}_2}{2},
+\qquad
+\bar{\boldsymbol{\omega}} =
+\frac{\boldsymbol{\omega}_1+\boldsymbol{\omega}_2}{2}.
+\label{eq:media_imus}
+\end{equation}
+
+A média reduz ruído não correlacionado sem introduzir custo computacional significativo. Correções centrípetas e tangenciais entre IMUs foram desconsideradas nesta etapa porque o deslocamento físico entre sensores é pequeno em relação à resolução efetiva do deslocamento óptico.
+
+\section{Estimativa de atitude}
+
+A atitude inicial é estimada a partir da direção da gravidade observada no primeiro instante, com \textit{yaw} inicial arbitrado como zero. O filtro de Madgwick propaga o quaternion usando o giroscópio corrigido e corrige a inclinação com o acelerômetro filtrado. Ao final, os quaternions são convertidos para ângulos de Euler na ordem \texttt{xyz} para exportação como:
+
+\begin{equation}
+\texttt{angle\_x}=\phi,
+\qquad
+\texttt{angle\_y}=\theta,
+\qquad
+\texttt{angle\_z}=\psi.
+\label{eq:angulos_exportados}
+\end{equation}
+
+Esses ângulos são usados para reconstruir $\mathbf{R}_{B}^{G}$ pela convenção $R_z(\psi)R_y(\theta)R_x(\phi)$.
+
+\section{Aceleração linear no mundo}
+
+Com a atitude estimada, a média das acelerações é transformada para o referencial global:
+
+\begin{equation}
+\mathbf{a}_{G,i} =
+\mathbf{R}_{B,i}^{G}\bar{\mathbf{a}}_{B,i} -
+\begin{bmatrix}0\\0\\g\end{bmatrix}.
+\label{eq:metodo_aceleracao_mundo}
+\end{equation}
+
+No estudo atual, o componente vertical é mantido apenas como diagnóstico de remoção da gravidade. A posição vertical $Z$ não é estimada, pois o sensor óptico disponível observa o plano horizontal e o ToF fornece apenas distância pontual ao solo, não odometria vertical.
+
+\section{Estimativa de posição por fluxo óptico e IMU}
+
+\subsection{Fluxo óptico como fonte primária}
+
+O sensor óptico fornece deslocamentos incrementais \texttt{flow\_dx} e \texttt{flow\_dy}. O ToF é validado por faixa física:
+
+\begin{equation}
+h_i =
+\begin{cases}
+\texttt{tof\_mm}_i, & 20 \leq \texttt{tof\_mm}_i \leq 300,\\
+h_0, & \text{caso contrário},
+\end{cases}
+\qquad h_0 = 90~\text{mm}.
+\label{eq:tof_valido}
+\end{equation}
+
+O deslocamento óptico corrigido é acumulado no plano $XY$ conforme a Equação~\ref{eq:flow_tof}. Os eixos do sensor são mapeados diretamente para o referencial global conforme a orientação adotada na montagem; caso haja inversão física de eixos, os sinais devem ser ajustados na calibração.
+
+\subsection{Eventos de fluxo óptico e intervalos sem medição}
+
+Um evento de fluxo óptico ocorre quando:
+
+\begin{equation}
+\Delta x_{f,i}\neq 0
+\quad \text{ou} \quad
+\Delta y_{f,i}\neq 0.
+\label{eq:evento_flow}
+\end{equation}
+
+Sequências de zeros não são interpretadas automaticamente como repouso. Elas podem indicar movimento abaixo da resolução do sensor ou ausência temporária de medição. Por isso, entre eventos consecutivos, a aceleração linear nos eixos $X$ e $Y$ é integrada pela regra do trapézio, e o deslocamento inercial é ancorado aos pontos ópticos pelas extremidades do intervalo, como na Equação~\ref{eq:ancoragem_gap}. Essa decisão mantém o fluxo óptico como referência de posição e limita o efeito da deriva inercial.
+
+\subsection{Associação da pose às medições LiDAR}
+
+A estimativa de pose é obtida em timestamps únicos, enquanto o conjunto bruto contém várias medições LiDAR para o mesmo timestamp. Para preservar todas as medições, associa-se a cada linha LiDAR a posição e a atitude do timestamp correspondente. Quando há linha bruta sem pose exata após deduplicação, usa-se a pose temporal mais próxima. O conjunto de dados usado na transformação da nuvem contém:
+
+\begin{equation}
+\{\texttt{tempo\_us}, x, y, \texttt{angle\_x}, \texttt{angle\_y}, \texttt{angle\_z}, \texttt{angle}, \texttt{distance}, \texttt{intensity}\}.
+\label{eq:colunas_pose_lidar}
+\end{equation}
+
+\section{Processamento da nuvem LiDAR global}
+
+Na etapa de geração da nuvem, as unidades das medições LiDAR são configuradas explicitamente:
+
+\begin{equation}
+\theta_L[^\circ] = 0{,}01\cdot \texttt{angle},
+\qquad
+r_L[\text{m}] = 0{,}001\cdot \texttt{distance}.
+\label{eq:unidades_lidar}
+\end{equation}
+
+Essa correção é importante porque versões antigas da documentação interna mencionavam distância em unidades de $0{,}25~\text{mm}$, enquanto a documentação do LD06 e os dados processados nesta versão adotam milímetros.
+
+\subsection{Filtros aplicados à nuvem}
+
+Os filtros são aplicados na seguinte ordem:
 
 \begin{enumerate}
-    \item Rotacionar aceleração do corpo para o mundo usando matriz de rotação baseada em atitude (roll, pitch, yaw)
-    \item Subtrair o vetor gravidade para compensação
+    \item valores numéricos finitos nas colunas obrigatórias;
+    \item timestamp positivo e não decrescente;
+    \item domínio do LiDAR: ângulo em $[0,36000)$ e intensidade em $[0,255]$;
+    \item distância mínima física de $0{,}02~\text{m}$;
+    \item limiar de intensidade calculado por Otsu;
+    \item limiar superior de distância calculado por Otsu em $\log_{10}(r_L)$;
+    \item continuidade de pose por cerca externa de Tukey aplicada às velocidades translacional e angular.
 \end{enumerate}
 
-A aceleração específica medida pela IMU é relacionada à aceleração absoluta por:
+A análise de bancada anterior indicou intensidade $223$ como um limiar útil para rejeitar parte dos retornos fracos do LiDAR. Entretanto, no processamento final esse valor não é fixado: o limiar $\tau_I$ é determinado por Otsu a partir da distribuição real do ensaio, mantendo o valor de bancada apenas como referência histórica e como parâmetro de versões anteriores da aquisição.
+
+\subsection{Correção da rotação do LiDAR principal}
+
+A montagem adotada considera que o LiDAR principal gira em torno do eixo $Y$ do drone. Portanto, a varredura local está no plano $X$--$Z$, e não no plano $X$--$Y$. A conversão local é a Equação~\ref{eq:ponto_lidar_local}. Nessa convenção, $\theta_L=0$ aponta para $+Z$ do drone e o aumento de $\theta_L$ desloca o ponto em direção a $+X$. Caso o zero físico do sensor ou o sentido de rotação sejam diferentes, esses parâmetros devem ser ajustados na calibração geométrica.
+
+\subsection{Transformação para o referencial global}
+
+Após a conversão local, o ponto é transformado para o corpo do drone e, em seguida, para o mundo:
 
 \begin{equation}
-\mathbf{a}_{mundo} = \mathbf{R}_{mundo}^{corpo} \mathbf{a}_{corpo} - \mathbf{g}_{mundo}
+\mathbf{p}_B =
+\mathbf{R}_{B}^{L}\mathbf{p}_L + \mathbf{t}_{B}^{L},
+\qquad
+\mathbf{p}_G =
+\mathbf{R}_{B}^{G}\mathbf{p}_B + \mathbf{p}_{drone,G}.
+\label{eq:metodo_transformacao_global}
 \end{equation}
 
-onde $\mathbf{g}_{mundo} = \begin{bmatrix} 0 \\ 0 \\ -g \end{bmatrix}$ com $g = 9.811$ m/s² e $\mathbf{R}_{mundo}^{corpo}$ é a matriz de rotação composta por:
+Na etapa atual, adota-se $\mathbf{R}_{B}^{L}=\mathbf{I}$ e $\mathbf{t}_{B}^{L}=\mathbf{0}$ como hipótese inicial. Essa simplificação permite validar o fluxo de processamento, mas não substitui a calibração extrínseca final entre o centro de referência do drone e o centro óptico do LiDAR.
 
-\begin{equation}
-\mathbf{R}_{mundo}^{corpo} = R_z(\psi) \, R_y(\theta) \, R_x(\phi)
-\end{equation}
+\section{Produtos do processamento}
 
-As matrizes elementares de rotação são:
-
-\begin{equation}
-R_x(\phi) = \begin{bmatrix}
-1 & 0 & 0 \\
-0 & \cos\phi & -\sin\phi \\
-0 & \sin\phi & \cos\phi
-\end{bmatrix}, \quad
-R_y(\theta) = \begin{bmatrix}
-\cos\theta & 0 & \sin\theta \\
-0 & 1 & 0 \\
--\sin\theta & 0 & \cos\theta
-\end{bmatrix}, \quad
-R_z(\psi) = \begin{bmatrix}
-\cos\psi & -\sin\psi & 0 \\
-\sin\psi & \cos\psi & 0 \\
-0 & 0 & 1
-\end{bmatrix}
-\end{equation}
-
-\subsection{Estimativa da posição inercial}
-
-\subsubsection{Integração numérica de aceleração}
-
-A partir da aceleração compensada no referencial global, estimamos velocidade e posição através de integração numérica. Considerando que os dados são amostrados em tempo discreto, assume-se aceleração constante entre períodos de amostragem consecutivos. Nesta aproximação, a área sob a curva aceleração-tempo aproxima-se da área de um trapézio.
-
-Seja $\Delta t_i = t_i - t_{i-1}$ o intervalo de tempo entre amostragens consecutivas. A velocidade é calculada por:
-
-\begin{equation}
-v_i = v_{i-1} + \frac{a_{i-1} + a_i}{2} \, \Delta t_i
-\label{eq:integracao_velocidade}
-\end{equation}
-
-Analogamente, a posição é obtida por integração da velocidade:
-
-\begin{equation}
-s_i = s_{i-1} + \frac{v_{i-1} + v_i}{2} \, \Delta t_i
-\label{eq:integracao_posicao}
-\end{equation}
-
-Esta abordagem (regra do trapézio) oferece melhor precisão que integração por Euler simples, reduzindo erros de truncamento em integrações sucessivas.
-
-\subsubsection{Condições iniciais}
-
-As posições iniciais $s_0$ e velocidades $v_0$ são assumidas como zero no referencial global, correspondendo ao ponto de início da coleta de dados. Esta convenção simplifica os cálculos e não prejudica a consistência relativa dos dados subsequentes.
-
-\section{Geração da nuvem de pontos}
-
-\subsection{Transformação de coordenadas do ponto LiDAR}
-
-Para cada ponto medido pelo LiDAR, é necessário aplicar três transformações sucessivas:
-
-\begin{enumerate}
-    \item Conversão de coordenadas polares (ângulo, distância) para cartesianas no referencial do LiDAR
-    \item Aplicação de transformação rígida fixa (rotação + translação) para referencial do corpo do drone
-    \item Aplicação de transformação dependente da atitude (roll, pitch, yaw) para referencial global
-    \item Adição da posição estimada do drone para obtenção de coordenadas globais finais
-\end{enumerate}
-
-\subsubsection{Coordenadas no referencial do LiDAR}
-
-O LiDAR LD06 é um sensor 2D que mede distância $r$ e ângulo horizontal $\theta$ (0° a 360° no plano X--Y). A conversão para coordenadas cartesianas no referencial do sensor é:
-
-\begin{equation}
-\mathbf{p}_{lidar} = \begin{bmatrix} r \cos\theta \\ r \sin\theta \\ 0 \end{bmatrix}
-\end{equation}
-
-\subsubsection{Transformação para referencial do drone}
-
-O LiDAR está montado em posição fixa no corpo do drone. Esta transformação rígida (composta por rotação fixa e translação) mapeia coordenadas do sensor para o corpo:
-
-\begin{equation}
-\mathbf{p}_{drone} = \mathbf{R}_{drone}^{lidar} \, \mathbf{p}_{lidar} + \mathbf{t}_{drone}^{lidar}
-\end{equation}
-
-onde $\mathbf{R}_{drone}^{lidar}$ e $\mathbf{t}_{drone}^{lidar}$ são calibrados experimentalmente durante a montagem do sistema.
-
-\subsubsection{Transformação para referencial global}
-
-A transformação final aplica a atitude estimada do drone (roll, pitch, yaw derivados das IMUs) para converter o ponto do corpo para o referencial global:
-
-\begin{equation}
-\mathbf{p}_{global} = \mathbf{R}_{mundo}^{corpo} \, \mathbf{p}_{drone} + \mathbf{s}_{drone}
-\end{equation}
-
-onde $\mathbf{s}_{drone}$ é a posição estimada do drone no referencial global (obtida por integração das acelerações transformadas).
-
-\subsection{Filtragem e consolidação da nuvem}
-
-A nuvem de pontos final é gerada aplicando os seguintes filtros:
-
-\begin{itemize}
-    \item Remoção de pontos com intensidade LiDAR inferior ao limiar de 223
-    \item Sincronização temporal entre dados IMU e LiDAR utilizando timestamps em microsegundos
-    \item Remoção de pontos cujas coordenadas globais estejam fora de limites fisicamente plausíveis (por exemplo, alturas negativas em ambientes de cavernas)
-\end{itemize}
-
-A nuvem resultante é armazenada em formato apropriado para visualização (PLY, PCD) ou processamento posterior em ferramentas de análise tridimensional.
+O processamento gera dois produtos de dados: uma tabela de pose estimada associada a cada medição LiDAR e uma tabela final com as coordenadas locais, no corpo e globais dos pontos filtrados. No conjunto atualmente presente no projeto, a tabela de pose preserva as 6.241 linhas do CSV bruto. Após os filtros da nuvem, permanecem 1.041 pontos globais. Esses números descrevem o processamento dos arquivos disponíveis e não devem ser interpretados como medida definitiva de desempenho do sistema em outros cenários.

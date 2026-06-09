@@ -1,35 +1,53 @@
 \chapter*{Lista de Símbolos}
 \addcontentsline{toc}{chapter}{Lista de Símbolos}
 
-\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{2.6cm} >{\raggedright\arraybackslash}X}
-$\omega$ & Frequência angular\\
-$\psi$   & Função de análise wavelet\\
-$\Psi$   & Transformada de Fourier de $\psi$\\
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{3.0cm} >{\raggedright\arraybackslash}X}
+$t$ & Tempo da amostra, em segundos\\
+$t_{us}$ & Timestamp registrado pelo microcontrolador, em microssegundos\\
+$\Delta t_i$ & Intervalo entre as amostras $i-1$ e $i$\\
+$f_s$ & Frequência de amostragem estimada a partir de $\Delta t$\\
 
-$t$      & Tempo\\
-$\Delta t$ & Intervalo de tempo\\
+$\mathbf{p}$ & Posição ou coordenada de um ponto\\
+$\mathbf{p}_{drone,G}$ & Posição do drone no referencial global\\
+$\mathbf{v}$ & Velocidade do drone no referencial global\\
+$\mathbf{a}$ & Aceleração linear\\
+$\tilde{\mathbf{a}}_B$ & Aceleração específica medida pela IMU no referencial do corpo\\
+$\mathbf{a}_G$ & Aceleração linear no referencial global após compensação da gravidade\\
+$\mathbf{g}_G$ & Vetor gravidade no referencial global\\
+$g$ & Módulo da aceleração da gravidade, adotado como $9{,}81~\text{m/s}^2$\\
 
-$a$      & Aceleração\\
-$v$      & Velocidade\\
-$s$      & Posição\\
-$g$      & Aceleração da gravidade\\
+$\boldsymbol{\omega}$ & Velocidade angular medida pelo giroscópio\\
+$\mathbf{b}_a,\mathbf{b}_\omega$ & Viés do acelerômetro e do giroscópio\\
+$\boldsymbol{\eta}_a,\boldsymbol{\eta}_\omega$ & Ruído de medição do acelerômetro e do giroscópio\\
+$d$ & Deriva acumulada pela integração temporal dos erros dos sensores\\
 
-$\phi$   & Ângulo de \textit{roll}\\
-$\theta$ & Ângulo de \textit{pitch}\\
-$\psi$   & Ângulo de \textit{yaw}\\
+$\phi$ & Ângulo de \textit{roll}, rotação em torno do eixo $X$\\
+$\theta$ & Ângulo de \textit{pitch}, rotação em torno do eixo $Y$\\
+$\psi$ & Ângulo de \textit{yaw}, rotação em torno do eixo $Z$\\
+$\mathbf{q}$ & Quaternion de atitude no formato $[q_w,q_x,q_y,q_z]$\\
+$\beta$ & Ganho do filtro de Madgwick\\
+$\mathbf{R}_{B}^{G}$ & Matriz de rotação que transforma vetores do corpo do drone para o referencial global\\
+$R_x,R_y,R_z$ & Matrizes elementares de rotação em torno dos eixos $X$, $Y$ e $Z$\\
 
-$R$      & Matriz de rotação\\
-$R_x$    & Matriz de rotação em torno do eixo $X$\\
-$R_y$    & Matriz de rotação em torno do eixo $Y$\\
-$R_z$    & Matriz de rotação em torno do eixo $Z$\\
+$\Delta x_f,\Delta y_f$ & Deslocamentos incrementais do sensor óptico de fluxo, em centímetros no CSV\\
+$h$ & Altura medida pelo ToF\\
+$h_0$ & Altura nominal usada na escala do fluxo óptico\\
+$k_h$ & Fator de escala do ToF, dado por $h/h_0$\\
+$\mathbf{p}_{flow}$ & Posição acumulada a partir do fluxo óptico no plano $XY$\\
+$\mathbf{p}_{fused}$ & Posição final após combinação de fluxo óptico com propagação inercial nos intervalos sem eventos\\
 
-$r$      & Distância medida pelo LiDAR\\
-$\alpha$ & Ângulo horizontal do LiDAR\\
-$\varphi$ & Ângulo vertical do LiDAR\\
+$\alpha_L$ & Ângulo de varredura do LiDAR, em centésimos de grau no CSV bruto\\
+$\theta_L$ & Ângulo de varredura do LiDAR convertido para radianos\\
+$r_L$ & Distância medida pelo LiDAR\\
+$I_L$ & Intensidade do retorno LiDAR\\
+$\gamma_Y$ & Ângulo físico de varredura/rotação do LiDAR principal em torno do eixo $Y$ do drone\\
+$\mathbf{p}_L$ & Coordenada do ponto no referencial local do LiDAR\\
+$\mathbf{p}_B$ & Coordenada do ponto no referencial do corpo do drone\\
+$\mathbf{p}_G$ & Coordenada global do ponto da nuvem\\
+$\mathbf{R}_{B}^{L}$ & Rotação extrínseca entre LiDAR e corpo do drone\\
+$\mathbf{t}_{B}^{L}$ & Translação extrínseca entre LiDAR e corpo do drone\\
 
-$\mathbf{a}_{corpo}$ & Vetor aceleração no referencial do drone\\
-$\mathbf{a}_{mundo}$ & Vetor aceleração no referencial do mundo\\
-$\mathbf{p}_{lidar}$ & Ponto no referencial do LiDAR\\
-$\mathbf{p}_{drone}$ & Ponto no referencial do drone\\
-$\mathbf{p}_{mundo}$ & Ponto no referencial do mundo\\
+$Q_1,Q_3$ & Primeiro e terceiro quartis usados na cerca de Tukey\\
+$IQR$ & Intervalo interquartil, $IQR=Q_3-Q_1$\\
+$\tau_I,\tau_r$ & Limiares automáticos de intensidade e distância calculados por Otsu\\
 \end{tabularx}
