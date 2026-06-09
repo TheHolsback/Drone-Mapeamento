@@ -1,0 +1,39 @@
+LD06:
+TX   -> GP5
+PWM  -> GP6
+GND  -> GND
+P5V  -> VBUS/5V
+
+MPU6500 #1:
+SDA  -> GP8
+SCL  -> GP9
+VCC  -> 3V3
+GND  -> GND
+
+MPU6500 #2:
+SDA  -> GP10
+SCL  -> GP11
+VCC  -> 3V3
+GND  -> GND
+
+MicroSD:
+MISO -> GP16
+CS   -> GP17
+SCK  -> GP18
+MOSI -> GP19
+VCC  -> 3V3
+GND  -> GND
+
+VL53L1X:
+SDA  -> GP8
+SCL  -> GP9
+VCC  -> 3V3
+GND  -> GND
+
+PMW3901:
+MISO -> GP12
+CS   -> GP13
+SCK  -> GP14
+MOSI -> GP15
+VCC  -> 3V3
+GND  -> GND

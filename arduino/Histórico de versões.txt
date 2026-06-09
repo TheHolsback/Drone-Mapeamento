@@ -1,0 +1,10 @@
+0 - LedPisca - Para verificar a gravação no Raspberry Pi Pico
+1 - printIMUs - Printar no Monitor Serial as informações lidas pelos acelerômetros
+2 - salvamentoSD - Criar arquivo e estruturar dados do IMUs para serem salvos no SD
+3 - printLiDar - Printar no Monitor Serial as informações lidas pelo LiDAR principal, com todos os ângulos
+4 - printLiDAR_ang_fix - Printar o Lidar principal com ângulos fixos para verificar a exatidão do sensor
+5 - printLiDAR_ang_fix_sd - Salvar as informações do passo 4 para confirmar e tratar possíveis erros de leitura
+6 - Completo - Ler e gravar no SD todas as informações de todos os sensores 
+7 - printIMUs_LidarOptSensor -  Ler o lidar que está no mesmo barramento que um dos acelerômetros e printar a informação no Monitor Serial
+8 - testePMW3901 - Tivemos que criar uma biblioteca "Padrao_PMW3901" pois a biblioteca padrão do Arduino IDE para esse sensor não possibilita a mudança do SPI, então conseguimos printar os dados recebidos pelo sensor optico
+9 - Completo_v2 - integração do antigo Completo com os novos sensores e otimização de gravação para obter o máximo de pontos possíveis

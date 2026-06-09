@@ -22,6 +22,11 @@ TwoWire imu2(10, 11);
 #define PACKET_SIZE 47
 #define POINTS_PER_PACKET 12
 
+unsigned long inicioGravacao = 0;
+bool calibFinalizadaIndicada = false;
+#define TEMPO_CALIBRACAO 5000;
+
+
 UART lidarSerial(LIDAR_TX_UNUSED, LIDAR_RX, NC, NC);
 
 File logFile;
@@ -38,15 +43,39 @@ uint16_t readUint16LE(int index) {
   return packet[index] | (packet[index + 1] << 8);
 }
 
+void writeMPU(TwoWire &i2c, uint8_t reg, uint8_t value) {
+  i2c.beginTransmission(MPU_ADDR);
+  i2c.write(reg);
+  i2c.write(value);
+  i2c.endTransmission(true);
+}
+
 void initMPU(TwoWire &i2c) {
   i2c.begin();
-
-  i2c.beginTransmission(MPU_ADDR);
-  i2c.write(0x6B);
-  i2c.write(0x00);
-  i2c.endTransmission(true);
+  writeMPU(i2c, 0x6B, 0x00);
 
   delay(100);
+
+  //             |   ACCELEROMETER    |           GYROSCOPE
+  //  DLPF_CFG | Bandwidth | Delay  | Bandwidth | Delay  | Sample Rate
+  //  ---------+-----------+--------+-----------+--------+-------------
+  //  0        | 260Hz     | 0ms    | 256Hz     | 0.98ms | 8kHz
+  //  1        | 184Hz     | 2.0ms  | 188Hz     | 1.9ms  | 1kHz
+  //  2        | 94Hz      | 3.0ms  | 98Hz      | 2.8ms  | 1kHz
+  //  3        | 44Hz      | 4.9ms  | 42Hz      | 4.8ms  | 1kHz
+  //  4        | 21Hz      | 8.5ms  | 20Hz      | 8.3ms  | 1kHz
+  //  5        | 10Hz      | 13.8ms | 10Hz      | 13.4ms | 1kHz
+  //  6        | 5Hz       | 19.0ms | 5Hz       | 18.6ms | 1kHz
+  //  7        |   -- Reserved --   |   -- Reserved --   | Reserved
+
+  // CONFIG = 0x1A
+  // DLPF_CFG = 2 costuma ser uma boa configuração inicial para reduzir ruído
+  // mantendo resposta suficiente para movimento manual.
+  writeMPU(i2c, 0x1A, 0x02);
+
+  // ACCEL_CONFIG_2 = 0x1D
+  // A_DLPF_CFG = 2 para filtrar acelerômetro.
+  writeMPU(i2c, 0x1D, 0x02);
 }
 
 bool readMPU(TwoWire &i2c, IMUData &data) {
@@ -149,7 +178,7 @@ void saveLD06PacketWithIMU() {
       sizeof(line),
       "%lu,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%u,%u,%u\n",
       tempo,
-      data1.ax, data1.ay, data1.az, data1.gx, data1.gy, data1.gz,
+      data1.ax, data1.ay, data1.az, data1.gx, data1.gy, data1.gz, 
       data2.ax, data2.ay, data2.az, data2.gx, data2.gy, data2.gz,
       angle,
       distance,
@@ -166,9 +195,38 @@ void saveLD06PacketWithIMU() {
   }
 }
 
+String getNextFileName() {
+  if (!SD.exists("dados.csv")) {
+    return "dados.csv";
+  }
+
+  int index = 1;
+  String fileName;
+
+  while (true) {
+    fileName = "dados_" + String(index) + ".csv";
+
+    if (!SD.exists(fileName)) {
+      return fileName;
+    }
+
+    index++;
+  }
+}
+
+void piscarLed(int npiscadas, float duracao) {
+  for (int i = 0; i < npiscadas; i++) {
+    digitalWrite(LED_BUILTIN, HIGH);  // Acende o LED
+    delay(duracao);         // Aguarda a duração em milissegundos
+    digitalWrite(LED_BUILTIN, LOW);   // Apaga o LED
+    delay(duracao);         // Aguarda meio segundo (duração do apagamento)
+  }
+}
+
 void setup() {
   Serial.begin(115200);
-  delay(2000);
+  pinMode(LED_BUILTIN, OUTPUT); // Configura o pino do LED como saída
+  piscarLed(3,750);
 
   Serial.println("Iniciando sistema...");
 
@@ -191,7 +249,12 @@ void setup() {
 
   Serial.println("SD OK");
 
-  logFile = SD.open("dados.csv", FILE_WRITE);
+
+  String nomeArquivo = getNextFileName();
+  Serial.print("Criando arquivo: ");
+  Serial.println(nomeArquivo);
+
+  logFile = SD.open(nomeArquivo, FILE_WRITE);
 
   if (!logFile) {
     Serial.println("ERRO: nao foi possivel abrir dados.csv");
@@ -204,9 +267,20 @@ void setup() {
   }
 
   Serial.println("Gravando dados...");
+  piscarLed(5,250);
+  
+  inicioGravacao = millis();
+  calibFinalizadaIndicada = false;
 }
 
 void loop() {
+
+  if (!calibFinalizadaIndicada && millis() - inicioGravacao >= 5000) {
+    piscarLed(2, 250);
+    calibFinalizadaIndicada = true;
+    Serial.println("Calibracao finalizada.");
+  }
+
   if (readLD06Packet()) {
     saveLD06PacketWithIMU();
   }

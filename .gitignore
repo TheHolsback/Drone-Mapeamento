@@ -10,5 +10,5 @@
 *.fdb_latexmk
 *.synctex.gz
 *.run.xml
-
+resultados_otimizacao/*
 .venv

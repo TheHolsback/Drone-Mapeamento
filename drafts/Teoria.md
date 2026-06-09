@@ -28,7 +28,7 @@ Para obter a posição pelo tempo, primeiro é necesário fazer duas integraçõ
 
 $$
 a(t)=\frac{dv}{dt}⇒v(t)=v0+∫a(t)dt\\
-v(t)=\frac{ds}{dt}⇒s(t)=s0+∫v(t) dt\\
+v(t)=\frac{ds}{dt}⇒s(t)=s0+∫v(t) dt\\
 $$
 
 Mas antes de fazermos essa integração é importante lembrar que as acelerações não correspondem as posições reais pois quando o drone acelera, ele acelera inclinado. Logo, para obtermos as posições corretas primeiro precisamos obter as acelerações ortogonais relativas ao mundo.
@@ -37,17 +37,22 @@ Mas antes de fazermos essa integração é importante lembrar que as aceleraçõ
 
 | Coluna | Significado |
 | --- | --- |
-| aceleracao_x | aceleração no eixo X do drone |
-| aceleracao_y | aceleração no eixo Y do drone |
-| aceleracao_z | aceleração no eixo Z do drone |
-| inclinacao_x | roll (ϕ) |
-| inclinacao_y | pitch (θ) |
-| inclinacao_z | yaw (ψ) |
+| aceleracao_x | aceleração no eixo X do drone (direita) |
+| aceleracao_y | aceleração no eixo Y do drone (frente) |
+| aceleracao_z | aceleração no eixo Z do drone (cima) |
+| inclinacao_x | pitch (θ) — rotação em torno de X (inclina frente/trás) |
+| inclinacao_y | roll (ϕ) — rotação em torno de Y (inclina para os lados) |
+| inclinacao_z | yaw (ψ) — rotação em torno de Z (gira no plano horizontal) |
+
+### Referencial do Drone (D)
+
+- **X**: direita
+- **Y**: frente
+- **Z**: cima
 
 ### 1. Vetor aceleração no corpo
 
 $$
-
 \mathbf{a}_{corpo} =
 \begin{bmatrix}
 a_x \\ a_y \\ a_z
@@ -70,36 +75,36 @@ $$
 
 Temos as inclinações do drone:
 
-- **roll** ( $\phi$ ) → rotação em X
-- **pitch** ( $\theta$ ) → rotação em Y
-- **yaw** ( $\psi$ ) → rotação em Z
+- **pitch** ( $\theta$ ) → rotação em torno de X (inclina frente/trás)
+- **roll** ( $\phi$ ) → rotação em torno de Y (inclina para os lados)
+- **yaw** ( $\psi$ ) → rotação em torno de Z (gira no plano horizontal)
 
-A matriz de rotação típica (ordem ZYX):
+A matriz de rotação (ordem ZYX):
 
 $$
 \mathbf{R}_{mundo}^{drone}=
 R_z(\psi)
-R_y(\theta)
-R_x(\phi)
+R_y(\phi)
+R_x(\theta)
 $$
 
 Onde:
 
 $$
-R_x(\phi)=
+R_x(\theta)=
 \begin{bmatrix}
 1 & 0 & 0 \\
-0 & \cos\phi & -\sin\phi \\
-0 & \sin\phi & \cos\phi
+0 & \cos\theta & -\sin\theta \\
+0 & \sin\theta & \cos\theta
 \end{bmatrix}
 $$
 
 $$
-R_y(\theta)=
+R_y(\phi)=
 \begin{bmatrix}
-\cos\theta & 0 & \sin\theta \\
+\cos\phi & 0 & \sin\phi \\
 0 & 1 & 0 \\
--\sin\theta & 0 & \cos\theta
+-\sin\phi & 0 & \cos\phi
 \end{bmatrix}
 $$
 
@@ -119,7 +124,7 @@ $$
 =
 \mathbf{R}_{mundo}^{corpo}
 \mathbf{a}_{corpo}
--
++
 \mathbf{g}_{mundo}
 
 $$
@@ -131,35 +136,35 @@ Essa forma é válida pois a IMU mede aceleração específica.
 ```python
 import numpy as np
 
-def rot_x(phi):
+def rot_x(theta):
     return np.array([
-        [1, 0, 0],
-        [0, np.cos(phi), -np.sin(phi)],
-        [0, np.sin(phi),  np.cos(phi)]
+        [1,              0,              0            ],
+        [0,  np.cos(theta), -np.sin(theta)            ],
+        [0,  np.sin(theta),  np.cos(theta)            ]
     ])
 
-def rot_y(theta):
+def rot_y(phi):
     return np.array([
-        [ np.cos(theta), 0, np.sin(theta)],
-        [0, 1, 0],
-        [-np.sin(theta), 0, np.cos(theta)]
+        [ np.cos(phi), 0, np.sin(phi)],
+        [0,            1, 0          ],
+        [-np.sin(phi), 0, np.cos(phi)]
     ])
 
 def rot_z(psi):
     return np.array([
         [np.cos(psi), -np.sin(psi), 0],
         [np.sin(psi),  np.cos(psi), 0],
-        [0, 0, 1]
+        [0,            0,           1]
     ])
 
 # dados da tabela
 a_body = np.array([ax, ay, az])
 
-roll  = phi
-pitch = theta
-yaw   = psi
+roll  = phi    # rotação em Y
+pitch = theta  # rotação em X
+yaw   = psi    # rotação em Z
 
-R = rot_z(yaw) @ rot_y(pitch) @ rot_x(roll)
+R = rot_z(yaw) @ rot_y(roll) @ rot_x(pitch)
 
 g_world = np.array([0, 0, -9.81])
 
@@ -201,23 +206,23 @@ import numpy as np
 t = np.array([...])   # tempo
 a = np.array([...])   # aceleração
 
-def posicao_tempo(a,t):
-	v = np.zeros_like(t)
-	s = np.zeros_like(t)
-	
-	for i in range(1, len(t)):
-	    dt = t[i] - t[i-1]
-	    v[i] = v[i-1] + 0.5*(a[i-1] + a[i])*dt
-	    s[i] = s[i-1] + 0.5*(v[i-1] + v[i])*dt
+def posicao_tempo(a, t):
+    v = np.zeros_like(t)
+    s = np.zeros_like(t)
 
-	return s
+    for i in range(1, len(t)):
+        dt = t[i] - t[i-1]
+        v[i] = v[i-1] + 0.5*(a[i-1] + a[i])*dt
+        s[i] = s[i-1] + 0.5*(v[i-1] + v[i])*dt
+
+    return s
 ```
 
 ## Calculo do ponto
 
-Vamos tomar de exemplo o LiDAR no eixo Z como exemplo
+Vamos tomar de exemplo o LiDAR como exemplo.
 
-Para cada ponto do LiDAR, vamos precisar fazer **3 transformações**:
+O LiDAR **rotaciona em torno do eixo Y** do drone (frente), varrendo o plano **X–Z** do drone. Para cada ponto do LiDAR, vamos precisar fazer **3 transformações**:
 
 1. **Ponto no referencial do LiDAR**
 2. **Transformação LiDAR → corpo do drone**
@@ -226,22 +231,22 @@ Para cada ponto do LiDAR, vamos precisar fazer **3 transformações**:
 
 ## 1. Referenciais envolvidos
 
+### Referencial do Drone (D)
+
+- Origem: centro de massa ou ponto definido
+- Eixos:
+    - **X**: direita
+    - **Y**: frente
+    - **Z**: cima
+
 ### Referencial do LiDAR (L)
 
 - Origem: centro do LiDAR
 - Eixos: definidos pelo fabricante
 - Medidas:
     - distância $r$
-    - ângulo horizontal $\theta$ (360° no plano X–Y do LiDAR)
-    - *(se houver)* ângulo vertical $\phi$
-
-### Referencial do Drone (D)
-
-- Origem: centro de massa ou ponto definido
-- Eixos típicos:
-    - X: frente
-    - Y: direita
-    - Z: para cima
+    - ângulo $\theta$ no plano X–Z (varrimento lateral/vertical)
+    - *(se houver)* ângulo de inclinação adicional
 
 ### Referencial do Mundo / Solo (W)
 
@@ -251,7 +256,7 @@ Para cada ponto do LiDAR, vamos precisar fazer **3 transformações**:
 
 ## 2. Coordenadas do ponto no referencial do LiDAR
 
-Como o LiDAR é **2D (360° no plano X–Y)**:
+Como o LiDAR **rotaciona em torno de Y** (frente do drone), ele varre o plano **X–Z**:
 
 $$
 \mathbf{p}_{lidar} =
@@ -262,19 +267,21 @@ z_L
 \end{bmatrix}
 =
 \begin{bmatrix}
-r\cos\theta \\
 r\sin\theta \\
-0
+0 \\
+r\cos\theta
 \end{bmatrix}
 $$
 
-Se houver **inclinação da aferição** (ângulo vertical ϕ\phiϕ):
+onde $\theta$ é o ângulo medido a partir do eixo Z (cima), positivo para o eixo X (direita).
+
+Se houver **inclinação adicional da aferição** (ângulo vertical $\phi$ fora do plano X–Z):
 
 $$
 \begin{aligned}
-x_L &= r\cos\phi\cos\theta \\
-y_L &= r\cos\phi\sin\theta \\
-z_L &= r\sin\phi
+x_L &= r\cos\phi\sin\theta \\
+y_L &= r\sin\phi \\
+z_L &= r\cos\phi\cos\theta
 \end{aligned}
 $$
 
@@ -282,8 +289,8 @@ $$
 
 Como o LiDAR não está perfeitamente alinhado com o drone, vamos precisar de:
 
-- Rotação fixa Rdronelidar $\mathbf{R}_{drone}^{lidar}$
-- Translação fixa tdronelidar $\mathbf{t}_{drone}^{lidar}$
+- Rotação fixa $\mathbf{R}_{drone}^{lidar}$
+- Translação fixa $\mathbf{t}_{drone}^{lidar}$
 
 Então:
 
@@ -297,12 +304,12 @@ $$
 
 ## 4. Atitude do drone: Rotação Drone → Mundo
 
-Usando **roll–pitch–yaw** (ordem ZYX):
+Usando **pitch–roll–yaw** (ordem ZYX):
 
 $$
 \mathbf{R}_{mundo}^{corpo}
 =
-R_z(\psi)\,R_y(\theta)\,R_x(\phi)
+R_z(\psi)\,R_y(\phi)\,R_x(\theta)
 $$
 
 (com as mesmas matrizes explicadas anteriormente)
@@ -344,22 +351,33 @@ import numpy as np
 # funções rot_x, rot_y e rot_z já declaradas anteriormente
 
 # ponto no lidar
-r = 5.0
-theta = np.deg2rad(30)
-phi = np.deg2rad(0)
+# LiDAR rotaciona em torno de Y (frente): varre o plano X-Z
+r     = 5.0
+theta = np.deg2rad(30)   # ângulo a partir do eixo Z, no plano X-Z
+phi   = np.deg2rad(0)    # inclinação adicional fora do plano X-Z (zero se LiDAR 2D)
 
 p_lidar = np.array([
-    r*np.cos(phi)*np.cos(theta),
-    r*np.cos(phi)*np.sin(theta),
-    r*np.sin(phi)
+    r * np.cos(phi) * np.sin(theta),   # X (direita)
+    r * np.sin(phi),                   # Y (frente) — zero para LiDAR 2D
+    r * np.cos(phi) * np.cos(theta)    # Z (cima)
 ])
 
 # atitude do drone
-roll = np.deg2rad(5)
-pitch = np.deg2rad(3)
-yaw = np.deg2rad(45)
+roll  = np.deg2rad(5)   # rotação em Y
+pitch = np.deg2rad(3)   # rotação em X
+yaw   = np.deg2rad(45)  # rotação em Z
 
-R = rot_z(yaw) @ rot_y(pitch) @ rot_x(roll)
+R = rot_z(yaw) @ rot_y(roll) @ rot_x(pitch)
 
-p_world = R @ p_lidar
+# transformação LiDAR → drone (identidade se já alinhado)
+R_drone_lidar = np.eye(3)
+t_drone_lidar = np.zeros(3)
+
+p_drone = R_drone_lidar @ p_lidar + t_drone_lidar
+
+# posição global do drone (obtida por integração das acelerações)
+p_drone_mundo = np.array([xd, yd, zd])
+
+# ponto final no referencial do mundo
+p_world = R @ p_drone + p_drone_mundo
 ```
