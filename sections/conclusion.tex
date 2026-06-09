@@ -47,6 +47,22 @@ Essas coordenadas demonstram que o método transforma pontos LiDAR locais para u
 
 \begin{figure}[H]
     \centering
+    \includegraphics[width=0.9\textwidth]{nuvem_global_3d}
+    \caption{Representação tridimensional da nuvem de pontos global obtida a partir da transformação dos dados do LiDAR para o referencial global.}
+    \label{fig:nuvem_global_3d}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{nuvem_global_2d}
+    \caption{Projeções ortogonais da nuvem de pontos global no plano horizontal, evidenciando a distribuição espacial dos pontos processados.}
+    \label{fig:nuvem_global_2d}
+\end{figure}
+
+As Figuras~\ref{fig:nuvem_global_3d} e~\ref{fig:nuvem_global_2d} demonstram a geração da nuvem global a partir dos dados processados. A precisão geométrica dessa representação ainda depende da calibração física dos sensores e da validação experimental com referências externas.
+
+\begin{figure}[H]
+    \centering
     \includegraphics[width=0.9\textwidth]{imu_flow_summary}
     \caption{Resumo visual do processamento de navegação, incluindo ToF, odometria óptica, atitude, aceleração linear e trajetória final no plano $XY$.}
     \label{fig:imu_flow_summary}
