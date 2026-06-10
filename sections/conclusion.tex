@@ -24,7 +24,7 @@ No processamento, a IMU deixou de ser tratada como fonte principal de posição 
 
 O conjunto bruto contém 6.241 linhas, 19 colunas e duração aproximada de $52{,}07~\text{s}$. Após a deduplicação por timestamp na estimativa de pose, foram processados 521 instantes distintos. A tabela de pose preserva as 6.241 medições LiDAR originais, associando a cada linha uma posição $x,y$ e uma atitude estimada.
 
-A trajetória estimada permaneceu restrita ao plano horizontal. Na tabela de pose, $x$ variou de $0$ a aproximadamente $0{,}246~\text{m}$, enquanto $y$ variou de aproximadamente $0{,}020$ a $7{,}191~\text{m}$. Esses valores descrevem o ensaio processado e não representam, por si só, erro de localização, pois ainda não há trajetória de referência externa consolidada para comparação. Entretanto, foram obtidas medidas reais de largura e comprimento do corredor, permitindo uma avaliação preliminar do erro geométrico da nuvem no plano horizontal.
+A trajetória estimada permaneceu restrita ao plano horizontal. Na tabela de pose, $x$ variou de $0$ a aproximadamente $0{,}246~\text{m}$, enquanto $y$ variou de aproximadamente $0{,}020$ a $7{,}191~\text{m}$. Esses valores descrevem o ensaio processado e não representam, por si só, erro absoluto de localização. A referência experimental disponível é parcial: foram obtidas medidas reais de largura e comprimento do corredor, permitindo uma avaliação preliminar da coerência geométrica da nuvem no plano horizontal, embora não tenha sido empregada trajetória externa ponto a ponto.
 
 Após a aplicação dos filtros físicos e estatísticos, a nuvem global resultante contém 1.041 pontos. A nuvem inclui as coordenadas locais do LiDAR, as coordenadas no corpo do drone e as coordenadas globais. As faixas globais observadas foram aproximadamente:
 
@@ -43,7 +43,7 @@ Após a aplicação dos filtros físicos e estatísticos, a nuvem global resulta
     \label{tab:faixas_nuvem}
 \end{table}
 
-As dimensões reais de referência do corredor foram obtidas por medição manual repetida três vezes para cada dimensão horizontal. A largura real adotada foi $1{,}20~\text{m}$ e o comprimento real adotado foi $7{,}00~\text{m}$. A altura do teto não foi usada na avaliação, pois não houve medida real confiável dessa dimensão.
+As dimensões reais de referência do corredor foram obtidas por medição manual repetida três vezes para cada dimensão horizontal. A largura real adotada foi $1{,}20~\text{m}$ e o comprimento real adotado foi $7{,}00~\text{m}$. A altura do teto não foi usada como referência quantitativa, pois essa dimensão não foi medida com precisão.
 
 Para extrair as dimensões estimadas da nuvem, considerou-se a largura como a amplitude robusta do eixo $X_{global}$ e o comprimento como a amplitude robusta do eixo $Y_{global}$. Foi usado o intervalo entre os percentis 5\% e 95\% para reduzir a influência de retornos isolados nas extremidades da nuvem. Com esse critério, a extensão horizontal estimada resultou nos erros apresentados na Tabela~\ref{tab:erro_dimensional_nuvem}.
 
@@ -63,7 +63,7 @@ Para extrair as dimensões estimadas da nuvem, considerou-se a largura como a am
 
 O erro de comprimento foi baixo em relação à dimensão total do corredor, indicando coerência preliminar da escala longitudinal do processamento. A largura, por outro lado, apresentou erro relativo elevado. Esse resultado deve ser interpretado com cautela, pois a estimativa depende da dispersão transversal dos pontos, da calibração extrínseca ainda simplificada, da orientação física do LiDAR e da presença de retornos isolados. Assim, a comparação valida parcialmente a geometria horizontal da nuvem, mas não caracteriza validação completa da localização absoluta.
 
-Essas coordenadas demonstram que o método transforma pontos LiDAR locais para uma nuvem tridimensional global, procedimento compatível com práticas de processamento de nuvens de pontos em robótica \cite{rusu20113d}. A qualidade geométrica final, entretanto, ainda depende de calibração extrínseca, validação do sentido físico do LiDAR e comparação com referências adicionais do ambiente.
+Essas coordenadas demonstram que o método transforma pontos LiDAR locais para uma nuvem tridimensional global, procedimento compatível com práticas de processamento de nuvens de pontos em robótica \cite{rusu20113d}. A qualidade geométrica final, entretanto, ainda depende de calibração extrínseca, validação do sentido físico do LiDAR e comparação com referências complementares do ambiente, além das dimensões horizontais já medidas.
 
 \begin{figure}[H]
     \centering
@@ -79,7 +79,7 @@ Essas coordenadas demonstram que o método transforma pontos LiDAR locais para u
     \label{fig:nuvem_global_2d}
 \end{figure}
 
-As Figuras~\ref{fig:nuvem_global_3d} e~\ref{fig:nuvem_global_2d} demonstram a geração da nuvem global a partir dos dados processados. A precisão geométrica dessa representação foi avaliada de forma preliminar apenas pelas dimensões horizontais do corredor; uma validação mais completa ainda depende da calibração física dos sensores e de referências experimentais adicionais.
+As Figuras~\ref{fig:nuvem_global_3d} e~\ref{fig:nuvem_global_2d} demonstram a geração da nuvem global a partir dos dados processados. A precisão geométrica dessa representação foi avaliada de forma preliminar pelas dimensões horizontais do corredor; uma validação mais completa ainda depende da calibração física dos sensores e de referências experimentais complementares, como a altura do teto e uma trajetória externa ponto a ponto.
 
 \begin{figure}[H]
     \centering
@@ -90,7 +90,7 @@ As Figuras~\ref{fig:nuvem_global_3d} e~\ref{fig:nuvem_global_2d} demonstram a ge
 
 \section{Limitações}
 
-A principal limitação atual é a ausência de estimativa de posição vertical. O ToF mede distância pontual até a superfície observada e é usado apenas como correção de escala do fluxo óptico. Sem um segundo sensor óptico orientado para observar um plano vertical, ou sem outro método de altitude, a posição $Z$ do drone é assumida como $0~\text{m}$ no processamento da nuvem. Além disso, como a altura do teto não foi medida com precisão suficiente, não há validação dimensional vertical do ambiente.
+A principal limitação atual é a ausência de estimativa de posição vertical. O ToF mede distância pontual até a superfície observada e é usado apenas como correção de escala do fluxo óptico. Sem um segundo sensor óptico orientado para observar um plano vertical, ou sem outro método de altitude, a posição $Z$ do drone é assumida como $0~\text{m}$ no processamento da nuvem. Além disso, como a altura do teto não foi medida com precisão suficiente, a validação dimensional vertical do ambiente permanece limitada.
 
 Outra limitação é a calibração extrínseca. Nesta etapa, usa-se $\mathbf{R}_{B}^{L}=\mathbf{I}$ e $\mathbf{t}_{B}^{L}=\mathbf{0}$ como valores iniciais. Essa hipótese é útil para validar o fluxo de processamento, mas a reconstrução final precisa medir a translação e a rotação reais entre o LiDAR, o corpo do drone e o ponto de referência da pose.
 
@@ -104,7 +104,7 @@ A partir da pose estimada do sistema, os pontos obtidos pelo LiDAR podem ser fil
 
 Os resultados obtidos demonstram a viabilidade do fluxo de processamento proposto e a possibilidade de geração de uma nuvem de pontos global a partir dos dados disponíveis. Com as medidas reais de largura e comprimento do corredor, tornou-se possível realizar uma avaliação preliminar do erro geométrico horizontal da nuvem. O comprimento estimado apresentou erro absoluto de $0{,}184~\text{m}$, equivalente a $2{,}63\%$, enquanto a largura estimada apresentou erro absoluto de $0{,}751~\text{m}$, equivalente a $62{,}61\%$. Esses valores indicam coerência parcial da escala longitudinal, mas também evidenciam limitações relevantes na estimativa transversal.
 
-Entretanto, o sistema ainda não deve ser caracterizado como uma solução de localização absoluta plenamente validada. A etapa atual comprova a integração funcional dos sensores e a consistência matemática do método empregado, enquanto a avaliação quantitativa completa da precisão depende de calibração física final, melhor controle experimental e comparação com referências adicionais. A ausência de medida confiável do teto impede a validação da dimensão vertical.
+Entretanto, o sistema ainda não deve ser caracterizado como uma solução de localização absoluta plenamente validada. A etapa atual comprova a integração funcional dos sensores e a consistência matemática do método empregado, enquanto a avaliação quantitativa completa da precisão depende de calibração física final, melhor controle experimental e comparação com referências complementares às dimensões horizontais já disponíveis. A falta de medida precisa do teto limita a validação da dimensão vertical.
 
 Para aplicações em drones aquáticos ou subaquáticos, recomenda-se avaliar a substituição do sensor óptico por sensores de pressão distribuídos nos três eixos, em uma configuração análoga ao princípio de funcionamento de um tubo de Pitot, de modo a estimar velocidades relativas ao fluido. Já para drones aéreos, recomenda-se a utilização de sensores ópticos adicionais, especialmente para melhorar a estimativa de altitude. Alternativamente, a inclusão de múltiplos sensores ópticos pode fornecer redundância nos diferentes eixos de medição, aumentando a robustez do sistema de localização relativa.
 
