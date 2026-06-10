@@ -70,7 +70,7 @@ O conjunto bruto de dados possui 19 colunas. Cada pacote LiDAR contém 12 pontos
     \label{tab:variaveis_coletadas}
 \end{table}
 
-A base processada contém 6.241 linhas, 521 timestamps distintos e duração aproximada de $52{,}07~\text{s}$. Esses valores são usados apenas para caracterizar o ensaio; métricas de acurácia absoluta dependem de medições externas de referência que ainda não foram consolidadas.
+A base processada contém 6.241 linhas, 521 timestamps distintos e duração aproximada de $52{,}07~\text{s}$. Esses valores são usados apenas para caracterizar o ensaio. O ambiente de referência foi um corredor cujas dimensões horizontais foram medidas experimentalmente em três repetições para cada dimensão, buscando reduzir erros de medição manual. Os valores consolidados adotados foram largura de $1{,}20~\text{m}$ e comprimento de $7{,}00~\text{m}$. A altura do teto não foi medida com precisão suficiente para ser usada como referência, de modo que a validação geométrica permanece limitada ao plano horizontal.
 
 \section{Pré-processamento da IMU}
 
@@ -232,6 +232,20 @@ Após a conversão local, o ponto é transformado para o corpo do drone e, em se
 \end{equation}
 
 Na etapa atual, adota-se $\mathbf{R}_{B}^{L}=\mathbf{I}$ e $\mathbf{t}_{B}^{L}=\mathbf{0}$ como hipótese inicial. Essa simplificação permite validar o fluxo de processamento, mas não substitui a calibração extrínseca final entre o centro de referência do drone e o centro óptico do LiDAR.
+
+\subsection{Análise de erro geométrico horizontal}
+
+Para avaliar preliminarmente a coerência geométrica da nuvem global, as dimensões horizontais medidas do corredor foram comparadas com as extensões estimadas na nuvem de pontos. A largura foi associada ao eixo $X_{global}$ e o comprimento ao eixo $Y_{global}$, coerente com a trajetória predominante do ensaio. Como os extremos absolutos da nuvem podem ser afetados por retornos isolados, a estimativa dimensional adotou a amplitude robusta entre os percentis 5\% e 95\% de cada eixo horizontal.
+
+Os erros são calculados por:
+
+\begin{equation}
+e_{abs}=|x_{estimado}-x_{real}|,
+\qquad
+e_{rel}(\%)=\frac{|x_{estimado}-x_{real}|}{x_{real}}\cdot 100.
+\end{equation}
+
+Essa comparação não utiliza a dimensão vertical, pois não há medida confiável do teto. Também não constitui validação completa da localização absoluta, uma vez que não há trajetória externa de referência para o drone.
 
 \section{Produtos do processamento}
 
