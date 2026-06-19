@@ -1,217 +1,24 @@
-\chapter{Fundamentação Teórica}
-\label{cap:conceitos}
+\section{Fundamentação conceitual e trabalhos relacionados}
+\label{sec:fundamentacao}
 
-\section{Navegação em ambientes sem GPS}
+\subsection{Navegação relativa e complementaridade sensorial}
 
-Em ambientes internos ou subterrâneos, a localização de uma plataforma móvel precisa ser estimada a partir de sensores embarcados. Esse problema é uma forma de navegação relativa: a origem do referencial global é definida no início da coleta e a trajetória subsequente é expressa em relação a essa origem. Em robótica móvel, tal estimativa costuma combinar modelos de movimento, medições de sensores e tratamento explícito de incertezas \cite{thrun2005probabilistic}.
+Na navegação relativa, a origem e a orientação inicial do referencial global são definidas no começo da coleta. A trajetória posterior é expressa em relação a essa condição inicial, sem equivaler a coordenadas geográficas ou a uma verdade absoluta de posição. Métodos de robótica móvel combinam fontes distintas porque nenhum sensor de baixo custo observa sozinho todos os estados com a mesma confiabilidade \parencite{thrun2005probabilistic,groves2013principles}.
 
-No caso de drones multirrotores, a atitude do corpo rígido influencia tanto o movimento quanto a interpretação dos sensores. Os ângulos de \textit{roll}, \textit{pitch} e \textit{yaw} descrevem a rotação do corpo em relação ao mundo, enquanto a posição e a velocidade descrevem a translação do centro de referência da plataforma \cite{beardMcLain2012}.
+As IMUs medem aceleração específica e velocidade angular no referencial do próprio sensor. Neste projeto, os giroscópios acompanham mudanças rápidas de orientação e os acelerômetros fornecem a direção da gravidade usada para corrigir a inclinação. A posição obtida por integração inercial livre não foi adotada como resultado principal, pois erros pequenos se acumulam rapidamente \parencite{tittertonWeston2004,farrell2008aided}. O filtro de Madgwick foi escolhido por estimar atitude com baixo custo computacional, combinando a resposta rápida do giroscópio com a referência gravitacional do acelerômetro \parencite{madgwick2010efficient}. A atitude é necessária sobretudo para orientar corretamente os pontos medidos pelo LiDAR.
 
-\section{Sensores utilizados}
+O PMW3901 estima o deslocamento aparente entre observações sucessivas da superfície. O princípio se relaciona ao registro de imagens por fluxo óptico, embora o circuito realize internamente a análise e entregue apenas incrementos de movimento \parencite{lucasKanade1981,pixart2017pmw3901}. Sua função prática é fornecer odometria relativa no plano horizontal, evitando que esse deslocamento dependa apenas da dupla integração da aceleração. Como a conversão para escala métrica varia com a distância até a superfície, o VL53L1X fornece uma medida ToF usada como fator auxiliar de escala \parencite{stmicroelectronics2024vl53l1x}.
 
-\subsection{Unidade de Medição Inercial}
+O LD06 mede ângulo, distância e intensidade do retorno em uma varredura de 360 graus \parencite{ldrobot2019ld06}. Diferentemente do sensor óptico, sua função não é estimar diretamente o deslocamento da plataforma, mas amostrar a geometria do ambiente. A integração ocorre quando cada ponto LiDAR recebe a posição e a atitude correspondentes ao instante de aquisição e, então, é transformado para o referencial global relativo.
 
-Uma IMU mede aceleração específica e velocidade angular em seu próprio referencial. No projeto, as leituras brutas dos acelerômetros e giroscópios são armazenadas como inteiros e convertidas para unidades do Sistema Internacional usando as escalas do sensor configurado:
+\subsection{Atitude, referenciais e nuvem de pontos}
 
-\begin{equation}
-\mathbf{a}_{SI} = \mathbf{c}_a \frac{g}{16384},
-\qquad
-\boldsymbol{\omega}_{SI} = \mathbf{c}_{\omega}\frac{\pi}{180\cdot 131},
-\label{eq:escala_imu}
-\end{equation}
+A atitude pode ser representada por ângulos de Euler ou quaternions. Os quaternions foram empregados na propagação temporal por evitarem singularidades da representação angular; os ângulos de \textit{roll}, \textit{pitch} e \textit{yaw} foram mantidos na saída por serem mais fáceis de inspecionar \parencite{diebel2006,siciliano2009robotics}. Sem magnetômetro ou referência externa de rumo, o \textit{yaw} inicial é arbitrário e pode derivar, condição que afeta a orientação global da nuvem.
 
-em que $\mathbf{c}_a$ e $\mathbf{c}_{\omega}$ são as contagens brutas de acelerômetro e giroscópio. Essas constantes correspondem às faixas $\pm 2g$ e $\pm 250^{\circ}/s$, compatíveis com os registradores da família MPU usada no sistema de aquisição \cite{tdk2013mpu6050register,tdk2013mpu6500}.
+Uma nuvem de pontos global é formada ao acumular observações feitas em diferentes poses. Para isso, é preciso conhecer tanto a transformação variável entre o corpo e o referencial global quanto a transformação fixa entre o LiDAR e o corpo. Erros de alinhamento, posição relativa ou sentido dos eixos aparecem como deformação ou dispersão da nuvem; a calibração extrínseca é, portanto, parte do desempenho do sistema, e não apenas um detalhe de montagem \parencite{siciliano2009robotics,rusu20113d}.
 
-A medição inercial contém viés e ruído. De forma simplificada:
+\subsection{Filtragem e critério de avaliação}
 
-\begin{equation}
-\tilde{\mathbf{a}}_B =
-\left(\mathbf{R}_{B}^{G}\right)^T
-\left(\mathbf{a}_G + \begin{bmatrix}0\\0\\g\end{bmatrix}\right)
-+ \mathbf{b}_a + \boldsymbol{\eta}_a,
-\qquad
-\tilde{\boldsymbol{\omega}}_B =
-\boldsymbol{\omega}_B + \mathbf{b}_{\omega} + \boldsymbol{\eta}_{\omega}.
-\label{eq:modelo_imu}
-\end{equation}
+Os sinais inerciais de bancada contêm vibração e ruído acima da dinâmica de interesse. Um filtro passa-baixa Butterworth foi usado antes da estimação de atitude, enquanto médias entre as duas IMUs reduziram componentes não correlacionados. Nos dados LiDAR, critérios físicos removeram valores fora do domínio e limiares calculados a partir da própria distribuição rejeitaram retornos fracos e distâncias discrepantes. O limiar de intensidade foi obtido pelo método de Otsu \parencite{otsu1979threshold}, e descontinuidades de pose foram identificadas por cercas de Tukey \parencite{tukey1977eda}.
 
-Assim, quando a aceleração é integrada para estimar velocidade e posição, erros pequenos deixam de ser apenas ruído instantâneo e passam a se acumular. Um viés constante de aceleração, por exemplo, produz erro de posição proporcional a $t^2$. Essa é a principal razão para não usar a IMU como fonte primária de posição por longos intervalos \cite{tittertonWeston2004,groves2013principles,farrell2008aided}.
-
-\subsection{Sensor óptico de fluxo e ToF}
-
-Sensores de fluxo óptico estimam o deslocamento aparente entre imagens consecutivas da superfície observada. O princípio é próximo aos métodos clássicos de registro de imagens, como Lucas--Kanade, mas no sensor PMW3901 parte do processamento é realizada internamente pelo próprio circuito, que disponibiliza deslocamentos incrementais em $X$ e $Y$ por SPI \cite{lucasKanade1981,pixart2017pmw3901}. No sistema de aquisição, esses incrementos são registrados em centímetros.
-
-Como a conversão entre deslocamento em pixels e deslocamento métrico depende da altura em relação à superfície, o sensor ToF VL53L1X é usado para corrigir a escala do fluxo óptico \cite{stmicroelectronics2024vl53l1x}. A correção de escala adotada é:
-
-\begin{equation}
-k_h = \frac{h}{h_0},
-\qquad
-\Delta \mathbf{p}_{flow,i} =
-\frac{k_h}{100}
-\begin{bmatrix}
-\Delta x_{f,i}\\
-\Delta y_{f,i}\\
-0
-\end{bmatrix},
-\label{eq:flow_tof}
-\end{equation}
-
-em que $h$ é a altura ToF válida, $h_0$ é a altura nominal usada na escala do sensor óptico e o fator $100$ converte centímetros para metros. Leituras ToF entre $20$ e $300~\text{mm}$ são consideradas fisicamente válidas para a configuração experimental; fora desse intervalo, substitui-se $h$ por $h_0=90~\text{mm}$ para evitar escalas incoerentes com o alcance operacional do sensor.
-
-\subsection{LiDAR}
-
-O LiDAR LD06 mede distância por tempo de voo e fornece pacotes seriais contendo ângulos, distâncias e intensidade de retorno. O sensor opera com varredura de $360^{\circ}$, comunicação UART a $230400$ baud e distâncias em milímetros conforme a documentação do fabricante \cite{ldrobot2019ld06}. A intensidade $I_L$ é usada como indicador de qualidade do retorno, pois retornos fracos tendem a estar associados a leituras mais ruidosas ou inválidas.
-
-\section{Atitude e transformação de referenciais}
-
-A orientação do drone pode ser representada por ângulos de Euler ou por quaternions. Neste trabalho, a atitude é estimada por quaternions e posteriormente expressa por \textit{roll}, \textit{pitch} e \textit{yaw} para compor as matrizes de rotação. Para a transformação final dos pontos, usa-se a convenção ZYX:
-
-\begin{equation}
-\mathbf{R}_{B}^{G} =
-R_z(\psi) R_y(\theta) R_x(\phi),
-\label{eq:rot_zyx}
-\end{equation}
-
-com:
-
-\begin{equation}
-R_x(\phi)=
-\begin{bmatrix}
-1 & 0 & 0\\
-0 & \cos\phi & -\sin\phi\\
-0 & \sin\phi & \cos\phi
-\end{bmatrix},
-\quad
-R_y(\theta)=
-\begin{bmatrix}
-\cos\theta & 0 & \sin\theta\\
-0 & 1 & 0\\
--\sin\theta & 0 & \cos\theta
-\end{bmatrix},
-\quad
-R_z(\psi)=
-\begin{bmatrix}
-\cos\psi & -\sin\psi & 0\\
-\sin\psi & \cos\psi & 0\\
-0 & 0 & 1
-\end{bmatrix}.
-\label{eq:rot_elementares}
-\end{equation}
-
-Ângulos de Euler são intuitivos, mas dependem da ordem de rotação e podem apresentar singularidades. Por isso, a estimação interna de atitude por quaternion é mais adequada para propagação temporal, enquanto os ângulos são mantidos como forma legível de exportação \cite{diebel2006,siciliano2009robotics}.
-
-\section{Filtro de Madgwick}
-
-O filtro de Madgwick estima a orientação combinando a integração do giroscópio com uma correção baseada na direção da gravidade observada pelo acelerômetro \cite{madgwick2010efficient}. A forma discreta adotada deriva da seguinte equação diferencial:
-
-\begin{equation}
-\dot{\mathbf{q}} =
-\frac{1}{2}\mathbf{q}\otimes
-\begin{bmatrix}0\\ \boldsymbol{\omega}\end{bmatrix}
-- \beta \frac{\mathbf{J}^{T}\mathbf{f}}{\lVert\mathbf{J}^{T}\mathbf{f}\rVert},
-\label{eq:madgwick}
-\end{equation}
-
-em que $\mathbf{q}$ é o quaternion de atitude, $\boldsymbol{\omega}$ é a velocidade angular corrigida de viés, $\mathbf{f}$ é o erro entre a direção da gravidade estimada e a medida pelo acelerômetro, $\mathbf{J}$ é a Jacobiana desse erro e $\beta$ controla o peso da correção. O ganho $\beta$ é estimado a partir do desvio padrão do giroscópio na janela inicial de calibração:
-
-\begin{equation}
-\beta = \sqrt{\frac{3}{4}}\,\sigma_{\omega}.
-\label{eq:beta_madgwick}
-\end{equation}
-
-\section{Aceleração linear e integração discreta}
-
-Após estimar a atitude, a aceleração medida no corpo é rotacionada para o referencial global e a gravidade é removida:
-
-\begin{equation}
-\mathbf{a}_G =
-\mathbf{R}_{B}^{G}\tilde{\mathbf{a}}_B -
-\begin{bmatrix}0\\0\\g\end{bmatrix}.
-\label{eq:aceleracao_mundo}
-\end{equation}
-
-Quando a IMU é usada nos intervalos sem eventos de fluxo óptico, velocidade e deslocamento são calculados pela regra do trapézio:
-
-\begin{equation}
-\mathbf{v}_i =
-\mathbf{v}_{i-1} +
-\frac{\mathbf{a}_{i-1}+\mathbf{a}_i}{2}\Delta t_i,
-\qquad
-\mathbf{p}_i =
-\mathbf{p}_{i-1} +
-\frac{\mathbf{v}_{i-1}+\mathbf{v}_i}{2}\Delta t_i.
-\label{eq:integracao_trapezio}
-\end{equation}
-
-A integração não é executada livremente por toda a trajetória. Ela é restrita aos intervalos em que o fluxo óptico não reporta deslocamento, reduzindo a exposição ao acúmulo de deriva. Esse uso é compatível com a noção de propagação inercial assistida por medições externas \cite{farrell2008aided}.
-
-\section{Combinação entre fluxo óptico e IMU}
-
-A trajetória final no plano $XY$ é ancorada pelos eventos do sensor óptico. Se dois eventos de fluxo óptico ocorrem nos tempos $t_a$ e $t_b$, a IMU fornece apenas a forma relativa do deslocamento dentro do intervalo. Esse deslocamento é escalado para coincidir com os pontos ópticos nas extremidades:
-
-\begin{equation}
-\mathbf{p}_{fused}(\tau) =
-\mathbf{p}_{flow}(t_a) +
-\Delta\mathbf{s}_{IMU}(\tau)
-\odot
-\frac{\mathbf{p}_{flow}(t_b)-\mathbf{p}_{flow}(t_a)}
-{\Delta\mathbf{s}_{IMU}(t_b)},
-\qquad t_a \leq \tau \leq t_b,
-\label{eq:ancoragem_gap}
-\end{equation}
-
-em que $\odot$ indica operação componente a componente. Quando o deslocamento inercial do intervalo é numericamente nulo, usa-se interpolação linear entre os dois pontos ópticos.
-
-\section{Processamento da nuvem de pontos}
-
-O LiDAR principal é modelado como um sensor 2D cujo plano de varredura, pela montagem física adotada, é o plano local $X$--$Z$ do drone. O eixo $Y$ é o eixo de rotação do LiDAR. Assim, cada medição válida é convertida para:
-
-\begin{equation}
-\theta_L = \frac{\pi}{180}\,0{,}01\,\alpha_L,
-\qquad
-\mathbf{p}_L =
-\begin{bmatrix}
-r_L\sin\theta_L\\
-0\\
-r_L\cos\theta_L
-\end{bmatrix}.
-\label{eq:ponto_lidar_local}
-\end{equation}
-
-A transformação para o referencial global combina a calibração extrínseca LiDAR--corpo, a atitude do drone e a posição estimada:
-
-\begin{equation}
-\mathbf{p}_G =
-\mathbf{R}_{B}^{G}
-\left(
-\mathbf{R}_{B}^{L}\mathbf{p}_L + \mathbf{t}_{B}^{L}
-\right)
-+ \mathbf{p}_{drone,G}.
-\label{eq:ponto_lidar_global}
-\end{equation}
-
-Na etapa atual, $\mathbf{R}_{B}^{L}$ é assumida como identidade e $\mathbf{t}_{B}^{L}$ como nula até que a calibração extrínseca física seja medida. Essa hipótese simplifica o processamento inicial, mas deve ser substituída pelos parâmetros reais da montagem na validação final.
-
-\section{Filtragem estatística e física}
-
-Os sinais inerciais são suavizados por um filtro passa-baixa Butterworth de quarta ordem com frequência de corte de $5~\text{Hz}$ para acelerômetros e giroscópios. A filtragem reduz ruído de alta frequência antes da estimação de atitude, preservando a dinâmica relevante do ensaio \cite{oppenheim1999discrete}.
-
-Na nuvem LiDAR, os filtros são aplicados em sequência. Primeiro são removidos valores não numéricos, timestamps inconsistentes, ângulos fora de $[0,36000)$, intensidades fora de $[0,255]$ e distâncias abaixo do limite físico mínimo do sensor. Em seguida, o limiar de intensidade é calculado pelo método de Otsu, que escolhe o limiar $\tau$ que maximiza a variância entre classes:
-
-\begin{equation}
-\tau^\ast = \operatorname*{arg\,max}_{\tau}
-\left[
-w_0(\tau)w_1(\tau)
-\left(\mu_0(\tau)-\mu_1(\tau)\right)^2
-\right].
-\label{eq:otsu}
-\end{equation}
-
-O mesmo critério é aplicado à distância em escala $\log_{10}$ para separar leituras úteis de valores de alcance discrepantes. Por fim, saltos de pose são detectados por cerca externa de Tukey:
-
-\begin{equation}
-x > Q_3 + 3(Q_3-Q_1),
-\label{eq:tukey}
-\end{equation}
-
-aplicada às velocidades translacionais e angulares entre poses sucessivas \cite{otsu1979threshold,tukey1977eda}. Essa combinação evita impor manualmente um único limite de velocidade e permite que a filtragem acompanhe a distribuição real do ensaio.
+A avaliação geométrica adotada é deliberadamente parcial. As extensões robustas da nuvem no plano horizontal foram comparadas à largura e ao comprimento medidos do corredor. Esse procedimento avalia a escala e a coerência global do mapa, mas não substitui um sistema externo capaz de medir a trajetória verdadeira em cada instante.
