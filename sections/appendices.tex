@@ -1,13 +1,13 @@
 \section{Pipeline de processamento da IMU e do sensor óptico}
-\label{ap:pose}
+\label{ap:posicao}
 
-O notebook complementar \path{imu_pipeline_flow_v2.ipynb} registra a etapa que converte as leituras inerciais, estima o viés dos giroscópios, filtra e combina as duas IMUs, calcula a atitude pelo filtro de Madgwick e acumula os incrementos do sensor óptico corrigidos pelo ToF. Seu produto principal é a pose relativa associada aos instantes de aquisição do LiDAR.
+O notebook complementar \path{imu_pipeline_flow_v2.ipynb} registra a etapa que converte as leituras inerciais, estima o viés dos giroscópios, filtra e combina as duas IMUs, calcula a atitude pelo filtro de Madgwick e acumula os incrementos do sensor óptico corrigidos pelo ToF. Seus produtos principais são a posição relativa e a atitude associadas aos instantes de aquisição do LiDAR.
 
 O arquivo deve ser executado a partir da raiz do projeto, onde se encontram os dados de entrada. Parâmetros dependentes do ensaio, como janela de calibração, frequências de corte, faixa válida do ToF e convenção de eixos, estão concentrados nas células iniciais. As figuras intermediárias devem ser inspecionadas antes da exportação, especialmente para verificar saturação, orientação inicial e intervalos sem eventos ópticos.
 
 \section{Processamento da nuvem de pontos global com LiDAR}
 \label{ap:nuvem}
 
-O notebook complementar \path{processamento_nuvem_lidar_global.ipynb} recebe a pose associada aos retornos LiDAR, aplica os critérios físicos e estatísticos, transforma os pontos para o referencial global relativo e exporta \path{nuvem_pontos_lidar_global.csv}. O mesmo material gera as visualizações \path{nuvem_global_3d.png} e \path{nuvem_global_2d.png} e calcula as amplitudes robustas usadas na comparação dimensional horizontal.
+O notebook complementar \path{processamento_nuvem_lidar_global.ipynb} recebe a posição e a atitude associadas aos retornos LiDAR, aplica os critérios físicos e estatísticos, transforma os pontos para o referencial global relativo e exporta \path{nuvem_pontos_lidar_global.csv}. O mesmo material gera as visualizações \path{nuvem_global_3d.png} e \path{nuvem_global_2d.png} e calcula as amplitudes robustas usadas na comparação dimensional horizontal.
 
 Em outra montagem, devem ser revisados a escala, a convenção angular e os parâmetros extrínsecos. Os valores identidade e nulo foram hipóteses exclusivas desta prova de conceito.

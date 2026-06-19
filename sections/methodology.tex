@@ -60,9 +60,9 @@ Antes do movimento, a plataforma permaneceu parada por 5~s para estimar o viés 
 
 O RP2040 leu as duas IMUs, o sensor óptico, o ToF e o LiDAR e armazenou os dados no cartão SD. A chegada de um pacote LiDAR funcionou como evento de gravação. Como cada pacote continha 12 pontos, as leituras mais recentes dos outros sensores foram repetidas para cada retorno, preservando a associação temporal sem descartar pontos da varredura.
 
-O arquivo bruto contém 6.241 registros, 19 variáveis e 521 instantes distintos, distribuídos em aproximadamente 52,07~s. Para estimar a pose, timestamps repetidos foram reduzidos a uma única amostra temporal. Em seguida, a pose calculada para cada instante foi novamente associada aos 12 retornos LiDAR correspondentes; quando necessário, empregou-se o instante válido mais próximo.
+O arquivo bruto contém 6.241 registros, 19 variáveis e 521 instantes distintos, distribuídos em aproximadamente 52,07~s. Para estimar a posição e a atitude, timestamps repetidos foram reduzidos a uma única amostra temporal. Em seguida, a posição e a atitude calculadas para cada instante foram novamente associadas aos 12 retornos LiDAR correspondentes; quando necessário, empregou-se o instante válido mais próximo.
 
-\subsection{Processamento da pose relativa}
+\subsection{Processamento da posição e da atitude relativas}
 
 As leituras das IMUs foram convertidas para unidades do Sistema Internacional conforme as faixas configuradas. O viés médio dos giroscópios foi estimado na janela estática inicial e subtraído das amostras posteriores. Acelerômetros e giroscópios passaram por filtro Butterworth passa-baixa de quarta ordem, com frequência de corte de 5~Hz, e as duas IMUs foram combinadas por média simples.
 
@@ -72,7 +72,7 @@ Os incrementos do PMW3901 foram adotados como fonte primária de deslocamento no
 
 \subsection{Geração da nuvem global}
 
-As medidas do LD06 foram convertidas de centésimos de grau e milímetros para graus e metros. O pré-processamento removeu valores não finitos, ângulos fora da faixa de uma volta, intensidades fora do domínio do sensor e distâncias inferiores a 0,02~m. Um limiar de Otsu foi aplicado à intensidade e à distância em escala logarítmica; cercas externas de Tukey rejeitaram descontinuidades incompatíveis nas velocidades entre poses sucessivas.
+As medidas do LD06 foram convertidas de centésimos de grau e milímetros para graus e metros. O pré-processamento removeu valores não finitos, ângulos fora da faixa de uma volta, intensidades fora do domínio do sensor e distâncias inferiores a 0,02~m. Um limiar de Otsu foi aplicado à intensidade e à distância em escala logarítmica; cercas externas de Tukey rejeitaram descontinuidades incompatíveis nas velocidades translacionais e angulares calculadas entre amostras sucessivas.
 
 De acordo com a montagem experimental, a varredura local foi tratada no plano $X$--$Z$, correspondente à rotação do LiDAR em torno do eixo longitudinal $Y$ da plataforma. Cada ponto local $\mathbf{p}_L$ foi transformado para o corpo e depois para o referencial global relativo por
 
@@ -117,6 +117,6 @@ O acesso aos módulos simplificou a identificação de falhas de comunicação e
 
 \subsection{Implementação do fluxo de processamento}
 
-O processamento foi dividido em duas etapas reproduzíveis. A primeira produziu uma série de pose a partir das IMUs, do fluxo óptico e do ToF; a segunda associou essa pose aos retornos LiDAR, aplicou os filtros e acumulou os pontos no referencial global. Separar as etapas permitiu inspecionar individualmente a atitude, a trajetória horizontal, a distribuição das distâncias e a transformação da nuvem antes de interpretar o mapa final.
+O processamento foi dividido em duas etapas reproduzíveis. A primeira produziu uma série de posição e atitude a partir das IMUs, do fluxo óptico e do ToF; a segunda associou essas estimativas aos retornos LiDAR, aplicou os filtros e acumulou os pontos no referencial global. Separar as etapas permitiu inspecionar individualmente a atitude, a trajetória horizontal, a distribuição das distâncias e a transformação da nuvem antes de interpretar o mapa final.
 
-Cuidados específicos incluíram a remoção de timestamps repetidos apenas durante a estimação de pose, a preservação de todos os retornos LiDAR, a conversão explícita de unidades e a exclusão da posição vertical em vez de inferi-la sem observação suficiente. Os notebooks que registram essas duas etapas são apresentados como material complementar nos Apêndices~\ref{ap:pose} e~\ref{ap:nuvem}; eles documentam a reprodutibilidade do experimento, mas não são usados como fontes bibliográficas.
+Cuidados específicos incluíram a remoção de timestamps repetidos apenas durante a estimação de posição e atitude, a preservação de todos os retornos LiDAR, a conversão explícita de unidades e a exclusão da posição vertical em vez de inferi-la sem observação suficiente. Os notebooks que registram essas duas etapas são apresentados como material complementar nos Apêndices~\ref{ap:posicao} e~\ref{ap:nuvem}; eles documentam a reprodutibilidade do experimento, mas não são usados como fontes bibliográficas.

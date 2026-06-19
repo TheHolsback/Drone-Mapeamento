@@ -3,7 +3,7 @@
 
 \subsection{Integração sensorial e trajetória relativa}
 
-O ensaio confirmou a operação conjunta dos sensores durante 52,07~s. Dos 6.241 registros LiDAR, foram identificados 521 timestamps distintos para a estimação de pose. A associação posterior preservou todos os retornos e atribuiu a cada um deles uma posição horizontal e uma atitude. A trajetória processada alcançou aproximadamente 7,19~m no eixo longitudinal, valor compatível com a ordem de grandeza do percurso de 7,00~m, embora essa comparação isolada não constitua erro de posição ponto a ponto.
+O ensaio confirmou a operação conjunta dos sensores durante 52,07~s. Dos 6.241 registros LiDAR, foram identificados 521 timestamps distintos para a estimação de posição e atitude. A associação posterior preservou todos os retornos e atribuiu a cada um deles uma posição horizontal e uma atitude. A trajetória processada alcançou aproximadamente 7,19~m no eixo longitudinal, valor compatível com a ordem de grandeza do percurso de 7,00~m, embora essa comparação isolada não constitua erro de posição ponto a ponto.
 
 A estratégia de usar o fluxo óptico como referência de deslocamento evitou que toda a trajetória dependesse da integração inercial. As IMUs permaneceram essenciais para orientar a varredura LiDAR e para dar continuidade aos intervalos curtos sem atualização óptica. O painel da Figura~\ref{fig:resumo_navegacao} reúne os sinais usados nessa etapa e permite verificar a relação temporal entre distância ToF, eventos ópticos, atitude, aceleração linear e trajetória final.
 
@@ -20,7 +20,7 @@ Esse resultado demonstra a continuidade funcional do pipeline, mas não permite 
 
 Após os critérios físicos e estatísticos, 1.041 pontos permaneceram na nuvem global. As coordenadas completas ocuparam os intervalos de $-3{,}298$ a $2{,}703$~m em $X_G$, de $-0{,}596$ a $7{,}709$~m em $Y_G$ e de $-2{,}769$ a $3{,}261$~m em $Z_G$. Esses extremos incluem retornos esparsos; por isso, a avaliação dimensional utilizou percentis robustos, e não os valores mínimo e máximo.
 
-As Figuras~\ref{fig:nuvem_3d} e~\ref{fig:nuvem_2d} mostram que os pontos adquiridos em poses sucessivas foram reunidos em um mesmo referencial. A projeção horizontal evidencia a direção predominante do corredor e a continuidade longitudinal. A dispersão transversal e vertical, porém, é maior que a geometria física esperada, sinal de que a transformação ainda incorpora erros de atitude, alinhamento e seleção dos retornos.
+As Figuras~\ref{fig:nuvem_3d} e~\ref{fig:nuvem_2d} mostram que os pontos adquiridos em posições e atitudes sucessivas foram reunidos em um mesmo referencial. A projeção horizontal evidencia a direção predominante do corredor e a continuidade longitudinal. A dispersão transversal e vertical, porém, é maior que a geometria física esperada, sinal de que a transformação ainda incorpora erros de atitude, alinhamento e seleção dos retornos.
 
 \begin{figure}[htbp]
     \centering
