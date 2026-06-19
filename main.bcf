@@ -2393,6 +2393,7 @@
     <bcf:citekey order="10" intorder="2">rusu20113d</bcf:citekey>
     <bcf:citekey order="11" intorder="1">otsu1979threshold</bcf:citekey>
     <bcf:citekey order="12" intorder="1">tukey1977eda</bcf:citekey>
+    <bcf:citekey order="13" intorder="1">tdk2013mpu6050register</bcf:citekey>
   </bcf:section>
   <!-- SORTING TEMPLATES -->
   <bcf:sortingtemplate name="nyt">

@@ -2,8 +2,8 @@
  * Completo_v2.ino
  *
  * Sensores:
- *   • IMU1  – MPU6500 (I²C bus GP8/GP9  → i2c0)
- *   • IMU2  – MPU6500 (I²C bus GP10/GP11 → i2c1)
+ *   • IMU1  – MPU-6050 (I²C bus GP8/GP9  → i2c0)
+ *   • IMU2  – MPU-6050 (I²C bus GP10/GP11 → i2c1)
  *   • ToF   – VL53L1X (mesmo bus da IMU1) → modo Short, budget 20 ms → 50 Hz
  *   • Flow  – PMW3901 (SPI1: MISO=GP12, CS=GP13, SCK=GP14, MOSI=GP15) → ~100–150 Hz
  *   • LiDAR – LD06  (uart1, RX=GP5) → ~490 pacotes/s, ~5880 pontos/s
@@ -29,7 +29,7 @@
 #include <VL53L1X.h>
 #include "Padrao_PMW3901.h"
 
-// ── Endereço I²C comum dos MPU6500 ───────────────────────────────────────────
+// ── Endereço I²C comum dos MPU-6050 ──────────────────────────────────────────
 #define MPU_ADDR 0x68
 
 // ── Buses I²C ────────────────────────────────────────────────────────────────
@@ -86,7 +86,7 @@ uint16_t readUint16LE(int index) {
   return packet[index] | (packet[index + 1] << 8);
 }
 
-// ── MPU6500 ──────────────────────────────────────────────────────────────────
+// ── MPU-6050 ─────────────────────────────────────────────────────────────────
 
 void writeMPU(TwoWire &i2c, uint8_t reg, uint8_t value) {
   i2c.beginTransmission(MPU_ADDR);

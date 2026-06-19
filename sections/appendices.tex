@@ -1,3 +1,4 @@
+\clearpage
 \section{Pipeline de processamento da IMU e do sensor óptico}
 \label{ap:posicao}
 
@@ -5,9 +6,17 @@ O notebook complementar \path{imu_pipeline_flow_v2.ipynb} registra a etapa que c
 
 O arquivo deve ser executado a partir da raiz do projeto, onde se encontram os dados de entrada. Parâmetros dependentes do ensaio, como janela de calibração, frequências de corte, faixa válida do ToF e convenção de eixos, estão concentrados nas células iniciais. As figuras intermediárias devem ser inspecionadas antes da exportação, especialmente para verificar saturação, orientação inicial e intervalos sem eventos ópticos.
 
+A versão integral exportada do notebook, disponível também como \href{run:apendice_a_pipeline_imu_sensor_optico.pdf}{PDF separado do Apêndice A}, é incorporada nas páginas seguintes.
+
+\includepdf[pages=-,pagecommand={},artifact=false]{apendice_a_pipeline_imu_sensor_optico.pdf}
+
 \section{Processamento da nuvem de pontos global com LiDAR}
 \label{ap:nuvem}
 
 O notebook complementar \path{processamento_nuvem_lidar_global.ipynb} recebe a posição e a atitude associadas aos retornos LiDAR, aplica os critérios físicos e estatísticos, transforma os pontos para o referencial global relativo e exporta \path{nuvem_pontos_lidar_global.csv}. O mesmo material gera as visualizações \path{nuvem_global_3d.png} e \path{nuvem_global_2d.png} e calcula as amplitudes robustas usadas na comparação dimensional horizontal.
 
 Em outra montagem, devem ser revisados a escala, a convenção angular e os parâmetros extrínsecos. Os valores identidade e nulo foram hipóteses exclusivas desta prova de conceito.
+
+A versão integral exportada do notebook, disponível também como \href{run:apendice_b_processamento_nuvem_lidar.pdf}{PDF separado do Apêndice B}, é incorporada nas páginas seguintes.
+
+\includepdf[pages=-,pagecommand={},artifact=false]{apendice_b_processamento_nuvem_lidar.pdf}

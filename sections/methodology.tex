@@ -14,7 +14,7 @@ A arquitetura foi concebida para futura instalação em um drone, mas a integra�
         \textbf{Componente} & \textbf{Interface} & \textbf{Função no experimento} \\
         \midrule
         Raspberry Pi Pico (RP2040) & I2C, SPI e UART & Coordenação das leituras, marcação temporal e gravação em cartão SD \\
-        Duas IMUs da família MPU & I2C & Aceleração e velocidade angular em três eixos \\
+        Duas IMUs MPU-6050 & I2C & Aceleração e velocidade angular em três eixos \\
         PMW3901 & SPI & Deslocamento incremental por fluxo óptico no plano horizontal \\
         VL53L1X & I2C & Distância ToF usada na correção de escala do fluxo óptico \\
         LD06 & UART & Distância, ângulo e intensidade dos retornos LiDAR \\
@@ -48,7 +48,7 @@ Uma placa de suporte impressa foi desenvolvida para aproximar os módulos e orga
     \label{fig:placa_componentes}
 \end{figure}
 
-\textbf{TODO:} confirmar na lista final de materiais se as duas unidades instaladas são MPU-6050, MPU-6500 ou uma combinação desses modelos. As faixas configuradas de aceleração e velocidade angular são compatíveis com a família MPU, mas a identificação física deve ser registrada sem ambiguidade.
+Foram utilizadas exclusivamente duas unidades MPU-6050, configuradas nas faixas de $\pm 2g$ para aceleração e $\pm 250^{\circ}/\text{s}$ para velocidade angular. Essas configurações determinam os fatores empregados na conversão das leituras brutas para unidades do Sistema Internacional \parencite{tdk2013mpu6050register}.
 
 \subsection{Ambiente e procedimento de ensaio}
 

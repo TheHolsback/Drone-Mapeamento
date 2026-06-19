@@ -4,13 +4,13 @@ PWM  -> GP6
 GND  -> GND
 P5V  -> VBUS/5V
 
-MPU6500 #1:
+MPU-6050 #1:
 SDA  -> GP8
 SCL  -> GP9
 VCC  -> 3V3
 GND  -> GND
 
-MPU6500 #2:
+MPU-6050 #2:
 SDA  -> GP10
 SCL  -> GP11
 VCC  -> 3V3
