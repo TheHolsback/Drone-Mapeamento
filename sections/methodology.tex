@@ -23,7 +23,30 @@ A arquitetura foi concebida para futura instalação em um drone, mas a integra�
     \end{tabularx}
 \end{table}
 
-As Figuras~\ref{fig:plataforma_frontal} e~\ref{fig:plataforma_lateral} mostram a montagem usada na coleta. O LiDAR foi instalado à frente da plataforma, e os módulos de aquisição foram concentrados sobre o chassi. A disposição facilitou o acesso e a depuração, mas deixou cabeamento aparente e não garantiu alinhamento metrológico entre todos os eixos, aspecto considerado na discussão dos resultados.
+Na arquitetura adotada, o fluxo óptico é a referência principal de deslocamento no plano, pois mede incrementos diretamente e evita que a posição horizontal dependa da dupla integração da aceleração. As IMUs foram usadas para atitude e continuidade temporal, o ToF para corrigir a escala local do fluxo óptico e o LiDAR para fornecer a geometria do ambiente. A aquisição embarcada desses sinais foi implementada no firmware descrito no Apêndice~\ref{ap:arduino}, enquanto o processamento de pose e nuvem é documentado nos Apêndices~\ref{ap:posicao} e~\ref{ap:nuvem}.
+
+A escolha dos módulos priorizou baixo custo, disponibilidade comercial, interfaces simples e aderência ao objetivo de testar uma cadeia completa de localização relativa e mapeamento. A Tabela~\ref{tab:justificativa_componentes} resume a justificativa técnica de cada elemento. A IMU efetivamente empregada foi a MPU-6050; portanto, menções genéricas a IMUs da família MPU em versões anteriores do projeto não indicam uso experimental de MPU-6500.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Justificativa técnica dos componentes utilizados na prova de conceito.}
+    \label{tab:justificativa_componentes}
+    \small
+    \begin{tabularx}{\textwidth}{@{}l X X@{}}
+        \toprule
+        \textbf{Componente} & \textbf{Motivo da escolha} & \textbf{Limitação considerada} \\
+        \midrule
+        PMW3901 & Fornece odometria incremental por fluxo óptico em superfície texturizada, com baixo consumo e integração direta por SPI. & Depende de textura, distância, iluminação e estabilidade da superfície observada; não mede deslocamento vertical nem rumo absoluto. \\
+        VL53L1X & Mede a distância local por ToF e permite ajustar a escala dos incrementos do fluxo óptico em relação ao plano observado. & A leitura é pontual e sensível à orientação e à reflectância; não substitui um altímetro calibrado nem fornece geometria do ambiente. \\
+        Duas MPU-6050 & Capturam aceleração e velocidade angular em três eixos para estimar atitude e apoiar intervalos curtos sem atualização óptica. A redundância permite média simples e inspeção de leituras discrepantes. & IMUs MEMS de baixo custo apresentam viés, ruído e deriva; sem magnetômetro ou referência externa, o \textit{yaw} permanece particularmente vulnerável. \\
+        LD06 & Entrega varredura LiDAR 2D com ângulo, distância e intensidade por UART, suficiente para testar a transformação de pontos locais para o referencial global. & A geometria final depende da pose estimada e da calibração extrínseca; retornos fracos, incidência desfavorável e desalinhamento físico aumentam a dispersão. \\
+        Raspberry Pi Pico & O RP2040 oferece I2C, SPI, UART e temporização em microssegundos com custo reduzido, permitindo registrar todos os sensores em uma única rotina embarcada. & Não executa o processamento pesado da nuvem em tempo real; atua principalmente como coletor e registrador de dados. \\
+        microSD e barramentos & O cartão SD preserva a coleta completa para pós-processamento; I2C, SPI e UART separam sensores com requisitos distintos de taxa e protocolo. & A associação temporal ainda sofre com latências e frequências diferentes; o registro em SD não garante sincronização metrológica entre sensores. \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+As Figuras~\ref{fig:plataforma_frontal} e~\ref{fig:plataforma_lateral} mostram a montagem usada na coleta. O LiDAR foi instalado à frente da plataforma para varrer a seção observada do corredor; o PMW3901 foi orientado para a superfície de referência do piso; o VL53L1X ficou associado ao conjunto óptico para medir a distância local de escala; e as IMUs foram fixadas ao mesmo corpo rígido, de modo a representar a atitude do conjunto. Os módulos de aquisição foram concentrados sobre o chassi para reduzir deslocamentos relativos e facilitar depuração, mas a montagem ainda deixou cabeamento aparente e não garantiu alinhamento metrológico entre todos os eixos, aspecto considerado na discussão dos resultados.
 
 \begin{figure}[htbp]
     \centering
@@ -48,25 +71,27 @@ Uma placa de suporte impressa foi desenvolvida para aproximar os módulos e orga
     \label{fig:placa_componentes}
 \end{figure}
 
-Foram utilizadas exclusivamente duas unidades MPU-6050, configuradas nas faixas de $\pm 2g$ para aceleração e $\pm 250^{\circ}/\text{s}$ para velocidade angular. Essas configurações determinam os fatores empregados na conversão das leituras brutas para unidades do Sistema Internacional \parencite{tdk2013mpu6050register}.
+Foram utilizadas exclusivamente duas unidades MPU-6050, configuradas nas faixas de $\pm 2g$ para aceleração e $\pm 250^{\circ}/\text{s}$ para velocidade angular. Essas configurações determinam os fatores empregados na conversão das leituras brutas para unidades do Sistema Internacional \parencite{tdk2013mpu6050register}. O uso de duas IMUs teve caráter experimental: permitiu comparar leituras, reduzir componentes não correlacionados por média simples e aumentar a robustez da coleta contra leituras discrepantes. Não se afirma ganho quantitativo isolado, pois não foi realizado ensaio específico para medir a melhoria produzida pela redundância.
 
 \subsection{Ambiente e procedimento de ensaio}
 
 O ensaio ocorreu em um corredor interno, sem uso de GPS, mediante deslocamento predominantemente longitudinal. A largura de referência foi 1,20~m e o comprimento foi 7,00~m. Cada dimensão horizontal foi medida manualmente três vezes e o valor consolidado foi adotado na comparação com a nuvem. Não foi obtida uma medida confiável da altura do teto; por esse motivo, nenhuma conclusão quantitativa foi extraída para a dimensão vertical.
 
-Antes do movimento, a plataforma permaneceu parada por 5~s para estimar o viés inicial dos giroscópios. Durante o percurso, procurou-se manter orientação e velocidade compatíveis com o alcance do sensor óptico e com a faixa observável do LiDAR. O piso oferecia textura para o fluxo óptico, mas variações de distância, iluminação, inclinação e vibração continuaram presentes e fazem parte das limitações do teste.
+Antes do movimento, a plataforma permaneceu parada por 5~s para estimar o viés inicial dos giroscópios. Durante o percurso, procurou-se manter orientação e velocidade compatíveis com o alcance do sensor óptico e com a faixa observável do LiDAR. O piso oferecia textura para o fluxo óptico, mas variações de distância, iluminação artificial, inclinação e vibração continuaram presentes e fazem parte das limitações do teste. A velocidade foi mantida manualmente em regime baixo e aproximadamente regular, pois deslocamentos menores entre amostras tendem a aumentar a densidade espacial da nuvem, facilitar a associação temporal e reduzir a propagação de erro entre leituras. Por outro lado, velocidades muito baixas prolongam a coleta e aumentam a exposição a ruídos de baixa frequência e deriva, de modo que há um compromisso experimental entre estabilidade, densidade de pontos e tempo de aquisição.
 
 \subsection{Aquisição e associação temporal}
 
-O RP2040 leu as duas IMUs, o sensor óptico, o ToF e o LiDAR e armazenou os dados no cartão SD. A chegada de um pacote LiDAR funcionou como evento de gravação. Como cada pacote continha 12 pontos, as leituras mais recentes dos outros sensores foram repetidas para cada retorno, preservando a associação temporal sem descartar pontos da varredura.
+O RP2040 leu as duas IMUs, o sensor óptico, o ToF e o LiDAR e armazenou os dados no cartão SD. A rotina embarcada apresentada no Apêndice~\ref{ap:arduino} foi responsável pela leitura dos sensores, pela marcação temporal com \texttt{tempo\_us} e pelo registro das amostras em formato tabular. A chegada de um pacote LiDAR funcionou como evento de gravação. Como cada pacote continha 12 pontos, as leituras mais recentes dos outros sensores foram repetidas para cada retorno, preservando a associação temporal sem descartar pontos da varredura.
 
-O arquivo bruto contém 6.241 registros, 19 variáveis e 521 instantes distintos, distribuídos em aproximadamente 52,07~s. Para estimar a posição e a atitude, timestamps repetidos foram reduzidos a uma única amostra temporal. Em seguida, a posição e a atitude calculadas para cada instante foram novamente associadas aos 12 retornos LiDAR correspondentes; quando necessário, empregou-se o instante válido mais próximo.
+Os sensores operaram com frequências e mecanismos de atualização distintos. No firmware, o ToF foi lido de forma não bloqueante quando havia nova medição, o sensor óptico foi consultado a cada iteração do laço principal e o LiDAR atuou como disparador da gravação. Assim, o timestamp comum não elimina diferenças de latência ou taxa, mas torna possível associar as leituras no pós-processamento.
+
+O arquivo bruto contém 6.241 registros, 19 variáveis e 521 instantes distintos, distribuídos em aproximadamente 52,07~s. Para estimar a posição e a atitude no notebook do Apêndice~\ref{ap:posicao}, timestamps repetidos foram reduzidos a uma única amostra temporal. Em seguida, a posição e a atitude calculadas para cada instante foram novamente associadas aos 12 retornos LiDAR correspondentes; quando necessário, o próprio notebook empregou associação pelo instante válido mais próximo. Diferenças de frequência entre sensores podem introduzir erro quando há movimento rápido entre amostras, razão pela qual a velocidade do ensaio foi mantida conservadora.
 
 \subsection{Processamento da posição e da atitude relativas}
 
 As leituras das IMUs foram convertidas para unidades do Sistema Internacional conforme as faixas configuradas. O viés médio dos giroscópios foi estimado na janela estática inicial e subtraído das amostras posteriores. Acelerômetros e giroscópios passaram por filtro Butterworth passa-baixa de quarta ordem, com frequência de corte de 5~Hz, e as duas IMUs foram combinadas por média simples.
 
-O filtro de Madgwick estimou a atitude a partir dos giroscópios corrigidos e dos acelerômetros filtrados. O ganho foi definido com base na dispersão dos giroscópios durante a janela de repouso. A atitude foi propagada como quaternion e exportada também em ângulos de Euler para inspeção e composição da rotação entre o corpo e o referencial global.
+O filtro de Madgwick estimou a atitude a partir dos giroscópios corrigidos e dos acelerômetros filtrados. O ganho foi definido com base na dispersão dos giroscópios durante a janela de repouso. A atitude foi propagada como quaternion e exportada também em ângulos de Euler para inspeção e composição da rotação entre o corpo e o referencial global. Esse fluxo computacional, incluindo filtragem, média das IMUs, cálculo de quaternions e exportação da pose associada ao LiDAR, é apresentado no Apêndice~\ref{ap:posicao}.
 
 Os incrementos do PMW3901 foram adotados como fonte primária de deslocamento no plano horizontal. A distância ToF válida entre 20 e 300~mm ajustou a escala; fora dessa faixa, usou-se o valor nominal de 90~mm para impedir uma amplificação incoerente. Os incrementos corrigidos foram acumulados desde a origem definida no início do ensaio. Sequências sem evento óptico não foram interpretadas automaticamente como repouso: nesses intervalos, a aceleração horizontal transformada para o referencial global forneceu uma propagação curta, ancorada aos eventos ópticos das extremidades. A posição vertical não foi estimada e permaneceu nula no processamento.
 
@@ -84,7 +109,7 @@ De acordo com a montagem experimental, a varredura local foi tratada no plano $X
     \label{eq:transformacao_global}
 \end{equation}
 
-em que $\mathbf{R}_{B}^{G}$ representa a atitude estimada, $\mathbf{R}_{B}^{L}$ e $\mathbf{t}_{B}^{L}$ representam a montagem fixa do LiDAR no corpo, e $\mathbf{p}_{\mathrm{plataforma},G}$ é a posição relativa. Nesta prova de conceito foram adotados $\mathbf{R}_{B}^{L}=\mathbf{I}$ e $\mathbf{t}_{B}^{L}=\mathbf{0}$, pois a transformação extrínseca ainda não havia sido medida. Essa hipótese permite testar a cadeia de processamento, mas introduz erro geométrico e não deve ser confundida com calibração concluída.
+em que $\mathbf{R}_{B}^{G}$ representa a atitude estimada, $\mathbf{R}_{B}^{L}$ e $\mathbf{t}_{B}^{L}$ representam a montagem fixa do LiDAR no corpo, e $\mathbf{p}_{\mathrm{plataforma},G}$ é a posição relativa. Nesta prova de conceito foram adotados $\mathbf{R}_{B}^{L}=\mathbf{I}$ e $\mathbf{t}_{B}^{L}=\mathbf{0}$, pois a transformação extrínseca ainda não havia sido medida. Essa hipótese permite testar a cadeia de processamento, mas introduz erro geométrico e não deve ser confundida com calibração concluída. A implementação dessa transformação e a exportação da nuvem global são detalhadas no notebook do Apêndice~\ref{ap:nuvem}.
 
 \subsection{Análise dimensional horizontal}
 
@@ -104,7 +129,7 @@ Essa análise verifica a escala geométrica horizontal da reconstrução, mas n�
 
 \subsection{Integração física e eletrônica}
 
-A integração concentrou aquisição, alimentação e armazenamento na própria plataforma. As duas IMUs e o ToF compartilharam os barramentos I2C disponíveis; o PMW3901 e o cartão SD usaram interfaces SPI separadas; e o LD06 comunicou-se por UART a 230400~baud. A arquitetura funcional é apresentada na Figura~\ref{fig:arquitetura_hardware}.
+A integração concentrou aquisição, alimentação e armazenamento na própria plataforma. As duas IMUs e o ToF compartilharam os barramentos I2C disponíveis; o PMW3901 e o cartão SD usaram interfaces SPI separadas; e o LD06 comunicou-se por UART a 230400~baud. A arquitetura funcional é apresentada na Figura~\ref{fig:arquitetura_hardware}, e sua rotina embarcada correspondente é documentada no Apêndice~\ref{ap:arduino}.
 
 \begin{figure}[htbp]
     \centering
@@ -119,4 +144,6 @@ O acesso aos módulos simplificou a identificação de falhas de comunicação e
 
 O processamento foi dividido em duas etapas reproduzíveis. A primeira produziu uma série de posição e atitude a partir das IMUs, do fluxo óptico e do ToF; a segunda associou essas estimativas aos retornos LiDAR, aplicou os filtros e acumulou os pontos no referencial global. Separar as etapas permitiu inspecionar individualmente a atitude, a trajetória horizontal, a distribuição das distâncias e a transformação da nuvem antes de interpretar o mapa final.
 
-Cuidados específicos incluíram a remoção de timestamps repetidos apenas durante a estimação de posição e atitude, a preservação de todos os retornos LiDAR, a conversão explícita de unidades e a exclusão da posição vertical em vez de inferi-la sem observação suficiente. Os notebooks que registram essas duas etapas são apresentados como material complementar nos Apêndices~\ref{ap:posicao} e~\ref{ap:nuvem}; eles documentam a reprodutibilidade do experimento, mas não são usados como fontes bibliográficas.
+Para reproduzir o ensaio, a sequência operacional é: montar os sensores no mesmo corpo rígido, conferir alimentação e barramentos, gravar os dados brutos pelo firmware embarcado, executar o notebook de posição e atitude a partir da raiz do projeto, executar o notebook de nuvem global com o arquivo de pose gerado na etapa anterior e, por fim, comparar as amplitudes robustas da nuvem com as medidas manuais do corredor. Recomenda-se executar os notebooks no ambiente virtual do próprio projeto, em \path{.venv}, para manter as versões de bibliotecas usadas no processamento.
+
+Cuidados específicos incluíram a remoção de timestamps repetidos apenas durante a estimação de posição e atitude, a preservação de todos os retornos LiDAR, a conversão explícita de unidades e a exclusão da posição vertical em vez de inferi-la sem observação suficiente. O firmware de aquisição e os notebooks que registram essas etapas são apresentados como material complementar nos Apêndices~\ref{ap:arduino}, \ref{ap:posicao} e~\ref{ap:nuvem}; eles documentam a reprodutibilidade do experimento, mas não são usados como fontes bibliográficas.

@@ -5,7 +5,7 @@
 
 O ensaio confirmou a operação conjunta dos sensores durante 52,07~s. Dos 6.241 registros LiDAR, foram identificados 521 timestamps distintos para a estimação de posição e atitude. A associação posterior preservou todos os retornos e atribuiu a cada um deles uma posição horizontal e uma atitude. A trajetória processada alcançou aproximadamente 7,19~m no eixo longitudinal, valor compatível com a ordem de grandeza do percurso de 7,00~m, embora essa comparação isolada não constitua erro de posição ponto a ponto.
 
-A estratégia de usar o fluxo óptico como referência de deslocamento evitou que toda a trajetória dependesse da integração inercial. As IMUs permaneceram essenciais para orientar a varredura LiDAR e para dar continuidade aos intervalos curtos sem atualização óptica. O painel da Figura~\ref{fig:resumo_navegacao} reúne os sinais usados nessa etapa e permite verificar a relação temporal entre distância ToF, eventos ópticos, atitude, aceleração linear e trajetória final.
+A estratégia de usar o fluxo óptico como referência de deslocamento evitou que toda a trajetória dependesse da integração inercial. As IMUs permaneceram essenciais para orientar a varredura LiDAR e para dar continuidade aos intervalos curtos sem atualização óptica. O painel da Figura~\ref{fig:resumo_navegacao} reúne os sinais usados nessa etapa e permite verificar a relação temporal entre distância ToF, eventos ópticos, atitude, aceleração linear e trajetória final. A geração desse painel decorre diretamente do processamento apresentado no Apêndice~\ref{ap:posicao}, que documenta a filtragem dos sinais, a estimação por quaternions, a correção do fluxo óptico pelo ToF e a associação final com os instantes do LiDAR.
 
 \begin{figure}[htbp]
     \centering
@@ -14,13 +14,28 @@ A estratégia de usar o fluxo óptico como referência de deslocamento evitou qu
     \label{fig:resumo_navegacao}
 \end{figure}
 
+As pequenas oscilações observadas na trajetória são esperadas em uma estimativa relativa desse tipo. Elas podem ser explicadas pela quantização dos incrementos do sensor óptico, pelas variações de escala associadas ao ToF, pela propagação curta da IMU nos intervalos sem atualização óptica e pela sensibilidade da rotação estimada ao ruído dos giroscópios. Ainda assim, a trajetória mantém formato aproximadamente retilíneo e comprimento compatível com o corredor, o que sugere coerência geométrica global do pipeline. Essa coerência não equivale a validação absoluta, pois não havia uma trajetória de referência para comparar cada ponto estimado.
+
+O ambiente de ensaio usou iluminação artificial. Sensores de fluxo óptico dependem de textura e contraste da superfície observada; portanto, regiões homogêneas, escuras, reflexivas ou com baixa textura tendem a reduzir a confiabilidade dos incrementos ópticos \parencite{lucasKanade1981,pixart2017pmw3901}. No caso do LiDAR, por se tratar de um sensor ativo de tempo de voo, a iluminação ambiente não é necessariamente o fator dominante; contudo, geometria de incidência, distância, reflectância da superfície e intensidade do retorno influenciam a qualidade dos pontos aceitos pelo filtro \parencite{ldrobot2019ld06}. Assim, a iluminação deve ser interpretada como um fator experimental relevante para o sensor óptico e como uma condição secundária, mas não irrelevante, para a qualidade geral da nuvem.
+
+A velocidade manual da plataforma também influenciou os resultados. Velocidades menores tendem a reduzir o deslocamento entre amostras, facilitar a associação temporal, aumentar a densidade espacial da nuvem e tornar a estimação mais estável. Por outro lado, reduzir demais a velocidade aumenta o tempo de aquisição e a exposição a deriva, ruído de baixa frequência e variações lentas de montagem. O ensaio, portanto, ficou em um compromisso prático entre densidade de pontos, estabilidade da leitura óptica e duração da coleta.
+
 Esse resultado demonstra a continuidade funcional do pipeline, mas não permite separar quantitativamente a contribuição individual de cada sensor. Não foi realizado um ensaio de ablação nem havia referência externa para comparar, em cada instante, a trajetória obtida apenas por fluxo óptico, apenas por IMU e pela combinação empregada.
 
 \subsection{Nuvem de pontos global}
 
 Após os critérios físicos e estatísticos, 1.041 pontos permaneceram na nuvem global. As coordenadas completas ocuparam os intervalos de $-3{,}298$ a $2{,}703$~m em $X_G$, de $-0{,}596$ a $7{,}709$~m em $Y_G$ e de $-2{,}769$ a $3{,}261$~m em $Z_G$. Esses extremos incluem retornos esparsos; por isso, a avaliação dimensional utilizou percentis robustos, e não os valores mínimo e máximo.
 
-As Figuras~\ref{fig:nuvem_3d} e~\ref{fig:nuvem_2d} mostram que os pontos adquiridos em posições e atitudes sucessivas foram reunidos em um mesmo referencial. A projeção horizontal evidencia a direção predominante do corredor e a continuidade longitudinal. A dispersão transversal e vertical, porém, é maior que a geometria física esperada, sinal de que a transformação ainda incorpora erros de atitude, alinhamento e seleção dos retornos.
+A Figura~\ref{fig:filtros_lidar} resume o efeito dos filtros de distância e intensidade aplicados às leituras do LD06. A comparação entre registros brutos e pontos preservados mostra que grande parte das leituras de baixa intensidade ou distância incompatível foi rejeitada antes da composição global. Esse passo reduz retornos isolados e leituras fisicamente pouco plausíveis, mas também torna a nuvem dependente dos limiares escolhidos no notebook do Apêndice~\ref{ap:nuvem}.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.92\textwidth]{lidar_filtros_intensidade_distancia.png}
+    \caption{Distribuições de distância e intensidade antes e depois da filtragem usada na geração da nuvem global.}
+    \label{fig:filtros_lidar}
+\end{figure}
+
+As Figuras~\ref{fig:nuvem_3d} e~\ref{fig:nuvem_2d} mostram que os pontos adquiridos em posições e atitudes sucessivas foram reunidos em um mesmo referencial. A projeção horizontal evidencia a direção predominante do corredor e a continuidade longitudinal. A dispersão transversal e vertical, porém, é maior que a geometria física esperada, sinal de que a transformação ainda incorpora erros de atitude, alinhamento e seleção dos retornos. O notebook do Apêndice~\ref{ap:nuvem} mostra que as medições locais do LiDAR foram transformadas para o referencial global usando a pose estimada e a hipótese de extrínsecos nulos, o que ajuda a explicar a sensibilidade da nuvem a pequenos erros angulares.
 
 \begin{figure}[htbp]
     \centering
@@ -35,6 +50,8 @@ As Figuras~\ref{fig:nuvem_3d} e~\ref{fig:nuvem_2d} mostram que os pontos adquiri
     \caption{Projeções ortogonais da nuvem global, usadas para inspecionar a coerência geométrica nos planos horizontal e vertical.}
     \label{fig:nuvem_2d}
 \end{figure}
+
+Nas projeções ortogonais, o plano $X_GY_G$ apresenta maior coerência visual porque o deslocamento principal da plataforma foi estimado pelo fluxo óptico no plano horizontal. Já as projeções $X_GZ_G$ e $Y_GZ_G$ concentram maior espalhamento, pois dependem mais diretamente da atitude, da orientação da varredura do LiDAR, da hipótese de altura nula da plataforma e da calibração extrínseca ainda não medida. Pequenos desalinhamentos físicos entre sensores, quando propagados ao longo de toda a trajetória, aparecem como abertura ou inclinação artificial da nuvem.
 
 \subsection{Erro dimensional horizontal}
 
@@ -55,24 +72,74 @@ A Tabela~\ref{tab:erro_dimensional} compara a amplitude entre os percentis 5 e 9
     \end{tabularx}
 \end{table}
 
-A largura estimada foi 1,951~m, resultando em erro absoluto de 0,751~m e erro relativo de 62,61\%. A discrepância é grande e impede afirmar fidelidade métrica transversal. Ela é coerente com a sensibilidade da largura à orientação da varredura, ao \textit{yaw}, à hipótese de extrínsecos nulos e a retornos de objetos fora das paredes principais. O resultado longitudinal favorável e o transversal desfavorável, considerados em conjunto, mostram que o pipeline reconstruiu uma organização espacial reconhecível, mas ainda não uma geometria calibrada em todas as direções.
+A Figura~\ref{fig:comparacao_dimensional} apresenta a mesma comparação de forma gráfica. Ela evidencia que a estimativa longitudinal permaneceu próxima da referência manual, enquanto a largura foi superestimada. Esse contraste reforça que a avaliação deve ser interpretada por eixo: o percurso principal foi preservado em escala plausível, mas a projeção transversal ainda acumulou erro suficiente para impedir conclusão metrológica.
 
-Não foi calculado erro vertical. Embora a nuvem contenha coordenadas em $Z_G$, a posição vertical da plataforma foi mantida nula e não havia medida confiável da altura do teto. Usar a extensão vertical da própria nuvem como referência circular produziria uma validação sem fundamento experimental.
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.82\textwidth]{comparacao_dimensional_horizontal.png}
+    \caption{Comparação gráfica entre dimensões reais e estimadas do corredor, com erro relativo por eixo.}
+    \label{fig:comparacao_dimensional}
+\end{figure}
 
-\subsection{Lições da integração}
+A largura estimada foi 1,951~m, resultando em erro absoluto de 0,751~m e erro relativo de 62,61\%. A discrepância é grande e impede afirmar fidelidade métrica transversal. Ela pode estar associada à combinação de ausência de calibração extrínseca medida fisicamente, acúmulo de erro de \textit{yaw}, sensibilidade da largura à orientação da varredura do LiDAR, desalinhamentos entre sensores, montagem experimental e limitações da própria referência manual usada na validação. A largura reconstruída é particularmente sensível a pequenos erros angulares porque a orientação da plataforma afeta diretamente a projeção dos pontos locais do LiDAR no referencial global. Assim, um erro pequeno na atitude ou no eixo físico do LiDAR pode produzir deslocamento transversal perceptível quando acumulado ao longo do corredor.
+
+O resultado longitudinal favorável e o transversal desfavorável, considerados em conjunto, mostram que o pipeline reconstruiu uma organização espacial reconhecível, mas ainda não uma geometria calibrada em todas as direções. A interpretação mais consistente é que o deslocamento principal foi capturado com escala plausível pelo fluxo óptico, enquanto a abertura transversal da nuvem foi mais afetada pela rotação estimada, pela montagem e pela ausência de extrínsecos medidos. Não foi calculado erro vertical. Embora a nuvem contenha coordenadas em $Z_G$, a posição vertical da plataforma foi mantida nula e não havia medida confiável da altura do teto. Usar a extensão vertical da própria nuvem como referência circular produziria uma validação sem fundamento experimental.
+
+\subsection{Lições Aprendidas Durante o Desenvolvimento}
 
 O experimento evidenciou que o desempenho final depende tanto dos algoritmos quanto da montagem. O sensor óptico requer textura, iluminação e distância compatíveis e pode produzir intervalos sem atualização; o ToF auxilia a escala, mas uma medida pontual não fornece odometria vertical; e as IMUs de baixo custo exigem repouso inicial, filtragem e limitação do tempo de integração. No LiDAR, intensidade e distância ajudam a rejeitar retornos ruins, mas não corrigem um eixo físico mal alinhado.
 
 A principal lição prática foi que a calibração extrínseca deve ser tratada como etapa experimental mensurável. Assumir rotação identidade e translação nula entre LiDAR e corpo foi suficiente para testar o encadeamento de dados, porém contribuiu diretamente para a dispersão observada. Fixação mais rígida, registro dos eixos, medida dos deslocamentos entre sensores e repetição controlada do percurso são necessários antes de comparar versões de filtros ou algoritmos mais complexos.
+
+Também ficou claro que sincronização temporal, iluminação, velocidade da plataforma e qualidade da superfície observada não são detalhes secundários. Eles condicionam a confiabilidade do fluxo óptico, a densidade da nuvem e a coerência entre pose e retornos LiDAR. Por fim, o experimento reforça a diferença entre demonstrar a viabilidade de um pipeline integrado e validar precisão absoluta: a primeira foi alcançada pela cadeia documentada nos Apêndices~\ref{ap:arduino}, \ref{ap:posicao} e~\ref{ap:nuvem}; a segunda exige ground truth externo e calibração metrológica.
+
+\subsection{Comparação econômica qualitativa}
+
+Não há no repositório uma lista de compras com valores efetivamente pagos; por isso, a comparação econômica deve ser lida apenas como ordem de grandeza. As páginas foram consultadas em 23 de junho de 2026 e os valores estão em dólar norte-americano, sem impostos, frete, variação cambial, itens substitutos, horas de desenvolvimento ou custo de ferramentas. A Tabela~\ref{tab:custo_componentes} organiza os principais itens do protótipo e inclui, ao final, uma referência pública do Caveatron.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Estimativa de custo dos principais componentes e comparação com referência pública do Caveatron.}
+    \label{tab:custo_componentes}
+    \scriptsize
+    \begin{tabularx}{\textwidth}{@{}p{0.23\textwidth} X r r r@{}}
+        \toprule
+        \textbf{Item e fonte} & \textbf{Função ou observação} & \textbf{Unit. (US\$)} & \textbf{Qtde.} & \textbf{Subtotal (US\$)} \\
+        \midrule
+        Raspberry Pi Pico \parencite{raspberrypi2026pico} & Microcontrolador RP2040 para leitura, temporização e gravação dos sensores. & 4,00 & 1 & 4,00 \\
+        PMW3901 \parencite{worldDroneMarket2026pmw3901} & Sensor de fluxo óptico usado como odometria incremental no plano. & 20,59 & 1 & 20,59 \\
+        VL53L1X \parencite{adafruit2026vl53l1x} & Sensor ToF usado para ajuste local da escala do fluxo óptico. & 14,95 & 1 & 14,95 \\
+        MPU-6050 \parencite{adafruit2026mpu6050} & Duas IMUs de baixo custo para aceleração e velocidade angular. & 12,95 & 2 & 25,90 \\
+        LD06/STL-06P \parencite{sensorlidar2026stl06p} & LiDAR 2D para distâncias, ângulos e intensidades da nuvem. & 99,00 & 1 & 99,00 \\
+        Breakout microSD \parencite{sparkfun2026microsdBreakout} & Interface SPI para armazenamento local dos registros. & 5,95 & 1 & 5,95 \\
+        Cartão microSD 16~GB \parencite{sparkfun2026microsdCard} & Referência de armazenamento; item consultado aparece como descontinuado. & 19,95 & 1 & 19,95 \\
+        Kit de cabos Qwiic \parencite{sparkfun2026qwiicCableKit} & Cabos e conectores para módulos I2C/STEMMA QT/Qwiic. & 12,95 & 1 & 12,95 \\
+        \midrule
+        \multicolumn{4}{r}{\textbf{Subtotal cotado do protótipo}} & \textbf{203,29} \\
+        Suporte, fixação e consumíveis & Estimativa ilustrativa para peças impressas, parafusos e pequenos itens sem nota de compra no repositório. & 15,00 & 1 & 15,00 \\
+        \multicolumn{4}{r}{\textbf{Total de referência do protótipo}} & \textbf{218,29} \\
+        \midrule
+        Caveatron \parencite{caveatron2026official,caveatronDiscuss2023cost} & Projeto aberto de mapeamento 3D de cavernas; não é produto à venda. Valor comunitário relatado em 23 jun. 2023 para construção de uma unidade. & 1.120,00 & 1 & 1.120,00 \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+O site oficial do Caveatron informa que o sistema é um projeto aberto e não um produto comercial à venda \parencite{caveatron2026official}. Assim, não há preço público atual de compra direta. A comparação usa apenas uma referência pública da comunidade, na qual um usuário relatou custo aproximado de US\$~1.120 por unidade construída, com componentes opcionais, em 23 de junho de 2023 \parencite{caveatronDiscuss2023cost}. Com essa ressalva, o total estimado do protótipo deste trabalho fica na ordem de US\$~218,29, cerca de 19,5\% desse valor comunitário. Essa diferença não implica equivalência técnica: o Caveatron é uma ferramenta dedicada a levantamento de cavernas, com interface, invólucro, fluxo de uso e maturidade distintos, enquanto este trabalho avalia uma prova de conceito acadêmica para integração sensorial e mapeamento relativo.
+
+\subsection{Síntese da discussão}
+
+Os resultados ocorreram porque o deslocamento predominante do ensaio foi longitudinal e compatível com a informação fornecida pelo fluxo óptico, enquanto a reconstrução transversal dependia fortemente da atitude, da varredura LiDAR e da montagem física. As hipóteses mais prováveis para os erros observados são o acúmulo de erro de \textit{yaw}, a ausência de calibração extrínseca, desalinhamentos físicos, variações de iluminação e textura, diferenças de frequência entre sensores e limitações da referência manual do corredor.
+
+Após uma calibração completa, seria esperado reduzir a dispersão transversal e vertical da nuvem, melhorar a consistência entre projeções ortogonais e tornar a comparação dimensional menos dependente de hipóteses de montagem. Podem ser generalizadas a necessidade de sincronização temporal, a importância da calibração extrínseca, a limitação da integração inercial pura e a utilidade do fluxo óptico como fonte de deslocamento relativo em ambiente sem GPS. Já os valores numéricos de largura, comprimento, dispersão e qualidade visual da nuvem são específicos da montagem, da velocidade manual, da iluminação e do corredor usados neste ensaio.
 
 \section{Limitações}
 \label{sec:limitacoes}
 
 Esta prova de conceito foi realizada em uma plataforma terrestre, não em voo. Assim, não inclui vibração de motores, variações rápidas de atitude, movimento vertical nem interação com o controlador de um drone. A transferência da arquitetura para uma aeronave requer nova avaliação de massa, alimentação, fixação, frequência de amostragem e segurança operacional.
 
-A trajetória não foi medida por câmera externa, estação total, marcadores ou outro sistema de referência. As dimensões do corredor fornecem somente duas restrições globais, insuficientes para validar localização absoluta ou caracterizar deriva ao longo do tempo. O \textit{yaw} não contou com magnetômetro ou referência externa, e a calibração extrínseca do LiDAR permaneceu aproximada.
+A trajetória não foi medida por câmera externa, sistema de marcadores, estação total, RTK, sistema de \textit{motion capture} ou outro ground truth. As dimensões do corredor fornecem somente duas restrições globais, insuficientes para validar localização absoluta ou caracterizar deriva ao longo do tempo. Como consequência, não é possível calcular erro absoluto de posição ao longo de todo o percurso nem validar a trajetória ponto a ponto. A avaliação se limita à coerência global da trajetória e da geometria reconstruída, devendo ser interpretada como prova de conceito, e não como validação metrológica completa.
 
-O sensor óptico depende das condições visuais do piso e o ToF foi usado apenas para escala local. A posição vertical foi fixada em zero. Além disso, a altura do teto não foi medida com confiabilidade, de modo que a forma vertical mostrada nas figuras é apenas o resultado do processamento dos retornos, sem validação dimensional independente.
+O \textit{yaw} não contou com magnetômetro ou referência externa de rumo, e a calibração extrínseca do LiDAR permaneceu aproximada. Embora as rotinas de aquisição e processamento estejam documentadas nos apêndices, essa documentação aumenta a reprodutibilidade do experimento sem remover a limitação de referência externa. O sensor óptico depende das condições visuais do piso e o ToF foi usado apenas para escala local. A posição vertical foi fixada em zero. Além disso, a altura do teto não foi medida com confiabilidade, de modo que a forma vertical mostrada nas figuras é apenas o resultado do processamento dos retornos, sem validação dimensional independente.
 
 \section{Conclusão}
 \label{sec:conclusao}
@@ -81,9 +148,11 @@ Foi implementada uma prova de conceito completa para aquisição, integração e
 
 A comparação com a largura de 1,20~m e o comprimento de 7,00~m, medidos três vezes cada, possibilitou uma avaliação preliminar do erro geométrico horizontal. O erro relativo de 2,63\% no comprimento sugere coerência longitudinal, enquanto o erro de 62,61\% na largura expõe a necessidade de melhorar alinhamento, filtragem e calibração extrínseca. A ausência de uma medida confiável do teto impediu qualquer validação vertical.
 
-Os resultados sustentam a viabilidade funcional do pipeline, mas não caracterizam uma solução de localização absoluta validada. A precisão final depende de calibração física, controle experimental, repetição dos ensaios e comparação com uma referência externa da trajetória. A distinção entre demonstração de integração e validação metrológica é, portanto, parte central da conclusão deste trabalho.
+Os resultados sustentam a viabilidade funcional do pipeline, mas não caracterizam uma solução de localização absoluta validada. A precisão final depende de calibração física, controle experimental, repetição dos ensaios e comparação com uma referência externa da trajetória. A distinção entre demonstração de integração e validação metrológica é, portanto, parte central da conclusão deste trabalho. Além dos resultados experimentais, os códigos e notebooks apresentados nos Apêndices~\ref{ap:arduino}, \ref{ap:posicao} e~\ref{ap:nuvem} documentam as principais etapas de aquisição e processamento, contribuindo para a reprodutibilidade da prova de conceito desenvolvida.
+
+Do ponto de vista econômico, a estimativa por componentes indica custo material baixo em relação a ferramentas abertas mais completas de mapeamento 3D, como o Caveatron, mas essa comparação é apenas contextual. O principal resultado econômico é mostrar que uma arquitetura acessível permite investigar o problema e formar uma base experimental; a adoção prática ainda dependeria de calibração, robustez mecânica, validação externa e integração em voo.
 
 \section{Trabalhos futuros}
 \label{sec:trabalhos_futuros}
 
-Os próximos passos prioritários são medir a transformação extrínseca entre sensores, repetir o percurso em condições controladas e registrar a trajetória com referência externa. Também se recomenda obter uma referência vertical confiável, avaliar o sistema sob diferentes pisos e iluminações e realizar ensaios de ablação para quantificar a contribuição de cada sensor. Somente após essas etapas faz sentido migrar a montagem para um drone, avaliar vibrações e movimento tridimensional e comparar técnicas probabilísticas de fusão, como filtro de Kalman estendido ou otimização em grafo.
+Os próximos passos prioritários são medir a transformação extrínseca entre sensores, repetir o percurso em condições controladas e registrar a trajetória com referência externa. Também se recomenda obter uma referência vertical confiável, avaliar o sistema sob diferentes pisos e iluminações, controlar a velocidade da plataforma e realizar ensaios de ablação para quantificar a contribuição de cada sensor. Somente após essas etapas faz sentido migrar a montagem para um drone, avaliar vibrações e movimento tridimensional e comparar técnicas probabilísticas de fusão, como filtro de Kalman estendido ou otimização em grafo.

@@ -4,7 +4,7 @@
 
 O notebook complementar \path{imu_pipeline_flow_v2.ipynb} registra a etapa que converte as leituras inerciais, estima o viés dos giroscópios, filtra e combina as duas IMUs, calcula a atitude pelo filtro de Madgwick e acumula os incrementos do sensor óptico corrigidos pelo ToF. Seus produtos principais são a posição relativa e a atitude associadas aos instantes de aquisição do LiDAR.
 
-O arquivo deve ser executado a partir da raiz do projeto, onde se encontram os dados de entrada. Parâmetros dependentes do ensaio, como janela de calibração, frequências de corte, faixa válida do ToF e convenção de eixos, estão concentrados nas células iniciais. As figuras intermediárias devem ser inspecionadas antes da exportação, especialmente para verificar saturação, orientação inicial e intervalos sem eventos ópticos.
+O arquivo deve ser executado a partir da raiz do projeto, onde se encontram os dados de entrada. Recomenda-se usar o ambiente virtual local \path{.venv}, também localizado na raiz, para manter as dependências Python usadas no processamento. Parâmetros dependentes do ensaio, como janela de calibração, frequências de corte, faixa válida do ToF e convenção de eixos, estão concentrados nas células iniciais. As figuras intermediárias devem ser inspecionadas antes da exportação, especialmente para verificar saturação, orientação inicial e intervalos sem eventos ópticos.
 
 A versão integral exportada do notebook, disponível também como \href{run:apendice_a_pipeline_imu_sensor_optico.pdf}{PDF separado do Apêndice A}, é incorporada nas páginas seguintes.
 
@@ -13,10 +13,36 @@ A versão integral exportada do notebook, disponível também como \href{run:ape
 \section{Processamento da nuvem de pontos global com LiDAR}
 \label{ap:nuvem}
 
-O notebook complementar \path{processamento_nuvem_lidar_global.ipynb} recebe a posição e a atitude associadas aos retornos LiDAR, aplica os critérios físicos e estatísticos, transforma os pontos para o referencial global relativo e exporta \path{nuvem_pontos_lidar_global.csv}. O mesmo material gera as visualizações \path{nuvem_global_3d.png} e \path{nuvem_global_2d.png} e calcula as amplitudes robustas usadas na comparação dimensional horizontal.
+O notebook complementar \path{processamento_nuvem_lidar_global.ipynb} recebe a posição e a atitude associadas aos retornos LiDAR, aplica os critérios físicos e estatísticos, transforma os pontos para o referencial global relativo e exporta \path{nuvem_pontos_lidar_global.csv}. O mesmo material gera as visualizações \path{nuvem_global_3d.png} e \path{nuvem_global_2d.png}, além dos gráficos complementares de filtragem e comparação dimensional inseridos na discussão. Ele deve ser executado depois do notebook de posição e atitude, preferencialmente no mesmo ambiente virtual \path{.venv}.
 
 Em outra montagem, devem ser revisados a escala, a convenção angular e os parâmetros extrínsecos. Os valores identidade e nulo foram hipóteses exclusivas desta prova de conceito.
 
 A versão integral exportada do notebook, disponível também como \href{run:apendice_b_processamento_nuvem_lidar.pdf}{PDF separado do Apêndice B}, é incorporada nas páginas seguintes.
 
 \includepdf[pages=-,pagecommand={},artifact=false]{apendice_b_processamento_nuvem_lidar.pdf}
+
+\clearpage
+\section{Rotina embarcada de aquisição dos sensores}
+\label{ap:arduino}
+
+O firmware de aquisição utilizado na plataforma está disponível em \path{arduino/Completo_v2_1/Completo_v2_1.ino}. Ele reúne a leitura das duas IMUs MPU-6050, do ToF VL53L1X, do sensor óptico PMW3901, do LiDAR LD06 e do cartão SD. A rotina organiza os dados em formato CSV, registra a referência temporal comum em microssegundos e usa a chegada de pacotes do LiDAR como evento de gravação.
+
+O trecho a seguir resume a estrutura central da rotina de aquisição, sem substituir o arquivo-fonte completo:
+
+\begin{verbatim}
+uint32_t tempo = micros();
+
+bool ok1 = readMPU(imu1, data1);
+bool ok2 = readMPU(imu2, data2);
+
+// ToF e fluxo optico sao mantidos em cache no loop principal.
+// Cada pacote LD06 exporta 12 retornos com as leituras mais recentes.
+snprintf(line, sizeof(line),
+  "%lu,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%u,%u,%u,%u,%d,%d\n",
+  tempo,
+  data1.ax, data1.ay, data1.az, data1.gx, data1.gy, data1.gz,
+  data2.ax, data2.ay, data2.az, data2.gx, data2.gy, data2.gz,
+  angle, distance, intensity, cachedTof, cachedFlowDx, cachedFlowDy);
+\end{verbatim}
+
+A inclusão desse firmware como apêndice permite relacionar a arquitetura física descrita na metodologia com a implementação efetivamente usada para registrar os dados experimentais. Em novas montagens, devem ser revisadas pinagem, barramentos, taxas efetivas de leitura, critérios de cache e formato das colunas antes de reutilizar o mesmo fluxo de processamento.

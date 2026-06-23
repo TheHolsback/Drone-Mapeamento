@@ -2485,6 +2485,21 @@
     <bcf:citekey order="11" intorder="1">otsu1979threshold</bcf:citekey>
     <bcf:citekey order="12" intorder="1">tukey1977eda</bcf:citekey>
     <bcf:citekey order="13" intorder="1">tdk2013mpu6050register</bcf:citekey>
+    <bcf:citekey order="14" intorder="1">lucasKanade1981</bcf:citekey>
+    <bcf:citekey order="14" intorder="2">pixart2017pmw3901</bcf:citekey>
+    <bcf:citekey order="15" intorder="1">ldrobot2019ld06</bcf:citekey>
+    <bcf:citekey order="34" intorder="1">raspberrypi2026pico</bcf:citekey>
+    <bcf:citekey order="35" intorder="1">worldDroneMarket2026pmw3901</bcf:citekey>
+    <bcf:citekey order="36" intorder="1">adafruit2026vl53l1x</bcf:citekey>
+    <bcf:citekey order="37" intorder="1">adafruit2026mpu6050</bcf:citekey>
+    <bcf:citekey order="38" intorder="1">sensorlidar2026stl06p</bcf:citekey>
+    <bcf:citekey order="39" intorder="1">sparkfun2026microsdBreakout</bcf:citekey>
+    <bcf:citekey order="40" intorder="1">sparkfun2026microsdCard</bcf:citekey>
+    <bcf:citekey order="41" intorder="1">sparkfun2026qwiicCableKit</bcf:citekey>
+    <bcf:citekey order="42" intorder="1">caveatron2026official</bcf:citekey>
+    <bcf:citekey order="42" intorder="2">caveatronDiscuss2023cost</bcf:citekey>
+    <bcf:citekey order="43" intorder="1">caveatron2026official</bcf:citekey>
+    <bcf:citekey order="44" intorder="1">caveatronDiscuss2023cost</bcf:citekey>
   </bcf:section>
   <!-- SORTING TEMPLATES -->
   <bcf:sortingtemplate name="nyt">
