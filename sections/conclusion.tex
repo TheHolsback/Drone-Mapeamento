@@ -141,18 +141,129 @@ A trajetória não foi medida por câmera externa, sistema de marcadores, estaç
 
 O \textit{yaw} não contou com magnetômetro ou referência externa de rumo, e a calibração extrínseca do LiDAR permaneceu aproximada. Embora as rotinas de aquisição e processamento estejam documentadas nos apêndices, essa documentação aumenta a reprodutibilidade do experimento sem remover a limitação de referência externa. O sensor óptico depende das condições visuais do piso e o ToF foi usado apenas para escala local. A posição vertical foi fixada em zero. Além disso, a altura do teto não foi medida com confiabilidade, de modo que a forma vertical mostrada nas figuras é apenas o resultado do processamento dos retornos, sem validação dimensional independente.
 
+
+\subsection{Lições Aprendidas Durante o Desenvolvimento}
+
+O experimento evidenciou que o desempenho final depende tanto dos algoritmos
+quanto das condições físicas e ambientais do ensaio. Fatores que poderiam ser
+tratados como detalhes secundários mostraram impacto direto e mensurável nos
+resultados, e merecem registro explícito.
+
+\textbf{Velocidade da plataforma.} A velocidade de deslocamento condicionou
+simultaneamente a densidade da nuvem e a estabilidade da odometria óptica.
+Velocidades menores aumentaram a sobreposição entre capturas consecutivas do
+LiDAR e reduziram o deslocamento entre quadros do sensor óptico, facilitando
+a associação temporal e produzindo estimativas mais estáveis. Por outro lado,
+velocidades excessivamente baixas ampliam o tempo de aquisição e expõem o
+sistema a deriva inercial de baixa frequência. O ensaio ficou em um
+compromisso prático entre esses dois efeitos; ensaios futuros deveriam
+registrar e controlar a velocidade para isolar sua influência.
+
+\textbf{Iluminação e tipo de piso.} O sensor óptico PMW3901 opera por
+correlação de imagens de superfície e depende diretamente de textura e
+contraste. Regiões homogêneas, escuras, reflexivas ou com baixo contraste
+reduziram a confiabilidade dos incrementos detectados
+\parencite{lucasKanade1981,pixart2017pmw3901}. Durante o ensaio, a
+iluminação artificial do corredor foi uniforme e não houve variação de piso;
+em ambientes reais, variações de iluminação ao longo do percurso podem
+introduzir assimetrias na qualidade do fluxo óptico, com impacto
+diferenciado em trechos distintos da trajetória.
+
+\textbf{Textura do piso.} Separada da iluminação por completude, a textura
+do piso é um fator autônomo: um piso com padrão visual rico gera mais eventos
+detectáveis pelo sensor óptico do que uma superfície lisa e monocromática,
+independentemente da intensidade luminosa. Pisos cerâmicos, cimentados com
+granulado, de madeira ou com outros padrões tendem a produzir incrementos mais
+consistentes. Essa dependência implica que o comportamento do sistema pode
+variar significativamente entre ambientes sem alteração algorítmica.
+
+\textbf{Calibração extrínseca e alinhamento mecânico.} A principal lição
+prática foi que a calibração extrínseca deve ser tratada como etapa
+experimental mensurável, não como hipótese simplificadora. Assumir rotação
+identidade e translação nula entre LiDAR e corpo foi suficiente para testar o
+encadeamento de dados; porém, pequenos desalinhamentos físicos, quando
+propagados ao longo de toda a trajetória, produziram dispersão perceptível na
+nuvem --- especialmente na direção transversal, que é mais sensível a erros
+angulares. Fixação mais rígida dos sensores, registro dos eixos e medida
+direta dos deslocamentos entre dispositivos são necessários antes de comparar
+versões de filtros ou de interpretar métricas dimensionais.
+
+\textbf{Sincronização temporal.} A qualidade da associação entre pose e
+retornos LiDAR depende da proximidade temporal entre os registros. Diferenças
+de frequência entre os sensores (LiDAR a \(\approx\)10~Hz, IMUs a taxas
+superiores, fluxo óptico dependente do evento) impõem que a interpolação ou
+o casamento de timestamps seja cuidadoso; erros de sincronização aparecem como
+descontinuidades ou duplicações na nuvem global.
+
+Em conjunto, essas observações reforçam que reprodutibilidade e controle
+experimental não são exigências exclusivas de sistemas de alta precisão: mesmo
+em provas de conceito, registrar e estabilizar as condições ambientais é o que
+permite distinguir limitações algorítmicas de limitações de montagem.
+
+
 \section{Conclusão}
 \label{sec:conclusao}
 
-Foi implementada uma prova de conceito completa para aquisição, integração e processamento de fluxo óptico, IMU, ToF e LiDAR em ambiente sem GPS. No ensaio em corredor, o sensor óptico forneceu a referência principal de deslocamento horizontal, as IMUs forneceram atitude e apoio temporal, e o LiDAR forneceu a geometria usada na reconstrução. Essa complementaridade permitiu manter um referencial espacial relativo e gerar uma nuvem de pontos global a partir de medições locais.
+Foi implementada uma prova de conceito completa para aquisição, integração e
+processamento de fluxo óptico, IMU, ToF e LiDAR em ambiente sem GPS. No ensaio
+em corredor, o sensor óptico forneceu a referência principal de deslocamento
+horizontal, as IMUs forneceram atitude e apoio temporal, e o LiDAR forneceu a
+geometria usada na reconstrução. Essa complementaridade permitiu manter um
+referencial espacial relativo e gerar uma nuvem de pontos global a partir de
+medições locais.
 
-A comparação com a largura de 1,20~m e o comprimento de 7,00~m, medidos três vezes cada, possibilitou uma avaliação preliminar do erro geométrico horizontal. O erro relativo de 2,63\% no comprimento sugere coerência longitudinal, enquanto o erro de 62,61\% na largura expõe a necessidade de melhorar alinhamento, filtragem e calibração extrínseca. A ausência de uma medida confiável do teto impediu qualquer validação vertical.
+A comparação com a largura de 1,20~m e o comprimento de 7,00~m, medidos três
+vezes cada, possibilitou uma avaliação preliminar do erro geométrico horizontal.
+O erro relativo de 2,63\% no comprimento sugere coerência longitudinal da
+estimativa de deslocamento fornecida pelo fluxo óptico. Esse resultado é
+esperado: o eixo longitudinal coincide com a direção principal de movimento da
+plataforma, que é exatamente o que o sensor óptico mede de forma direta e
+acumulativa. A diferença entre os erros observados sugere, portanto, que a
+arquitetura adotada preservou adequadamente a coerência do deslocamento
+longitudinal, diretamente relacionado à odometria baseada em fluxo óptico.
+Em contrapartida, a reconstrução transversal mostrou-se mais sensível a erros
+de orientação e alinhamento entre sensores: a largura não é medida diretamente
+pelo fluxo óptico, mas resulta da projeção dos pontos LiDAR no referencial
+global, operação que depende da atitude estimada pelas IMUs e da calibração
+extrínseca entre LiDAR e corpo. Como pequenas variações de \textit{yaw}
+afetam diretamente essa projeção lateral, o erro de 62,61\% na largura indica
+que a principal fonte de degradação está na propagação de erros angulares e no
+alinhamento entre referenciais, e não na odometria em si. Espera-se que a
+calibração extrínseca medida fisicamente e uma referência externa de orientação
+reduzam significativamente essa dispersão em trabalhos futuros. A ausência de
+uma medida confiável do teto impediu qualquer validação vertical.
 
-Os resultados sustentam a viabilidade funcional do pipeline, mas não caracterizam uma solução de localização absoluta validada. A precisão final depende de calibração física, controle experimental, repetição dos ensaios e comparação com uma referência externa da trajetória. A distinção entre demonstração de integração e validação metrológica é, portanto, parte central da conclusão deste trabalho. Além dos resultados experimentais, os códigos e notebooks apresentados nos Apêndices~\ref{ap:arduino}, \ref{ap:posicao} e~\ref{ap:nuvem} documentam as principais etapas de aquisição e processamento, contribuindo para a reprodutibilidade da prova de conceito desenvolvida.
+Os resultados sustentam a viabilidade funcional do pipeline, mas não
+caracterizam uma solução de localização absoluta validada. A precisão final
+depende de calibração física, controle experimental, repetição dos ensaios e
+comparação com uma referência externa da trajetória. A distinção entre
+demonstração de integração e validação metrológica é, portanto, parte central
+da conclusão deste trabalho. Além dos resultados experimentais, os códigos e
+notebooks apresentados nos Apêndices~\ref{ap:arduino}, \ref{ap:posicao}
+e~\ref{ap:nuvem} documentam as principais etapas de aquisição e processamento,
+contribuindo para a reprodutibilidade da prova de conceito desenvolvida.
 
-Do ponto de vista econômico, a estimativa por componentes indica custo material baixo em relação a ferramentas abertas mais completas de mapeamento 3D, como o Caveatron, mas essa comparação é apenas contextual. O principal resultado econômico é mostrar que uma arquitetura acessível permite investigar o problema e formar uma base experimental; a adoção prática ainda dependeria de calibração, robustez mecânica, validação externa e integração em voo.
+Do ponto de vista econômico, a estimativa por componentes indica custo material
+baixo em relação a ferramentas abertas mais completas de mapeamento 3D, como o
+Caveatron, mas essa comparação é apenas contextual. O principal resultado
+econômico é mostrar que uma arquitetura acessível permite investigar o problema
+e formar uma base experimental; a adoção prática ainda dependeria de
+calibração, robustez mecânica, validação externa e integração em voo.
 
 \section{Trabalhos futuros}
 \label{sec:trabalhos_futuros}
 
-Os próximos passos prioritários são medir a transformação extrínseca entre sensores, repetir o percurso em condições controladas e registrar a trajetória com referência externa. Também se recomenda obter uma referência vertical confiável, avaliar o sistema sob diferentes pisos e iluminações, controlar a velocidade da plataforma e realizar ensaios de ablação para quantificar a contribuição de cada sensor. Somente após essas etapas faz sentido migrar a montagem para um drone, avaliar vibrações e movimento tridimensional e comparar técnicas probabilísticas de fusão, como filtro de Kalman estendido ou otimização em grafo.
+Os próximos passos prioritários decorrem diretamente das limitações
+identificadas. A medição da transformação extrínseca entre sensores e a
+adição de uma referência externa de orientação --- como magnetômetro ou
+câmera de rastreamento --- são as intervenções com maior potencial de reduzir
+o erro transversal observado, uma vez que a dispersão lateral da nuvem foi
+associada principalmente à propagação de erros de \textit{yaw} e à ausência
+de calibração extrínseca. Em paralelo, recomenda-se repetir o percurso em
+condições controladas de velocidade, iluminação e tipo de piso, e registrar
+a trajetória com referência externa para permitir avaliação ponto a ponto.
+Também se recomenda obter uma referência vertical confiável e realizar ensaios
+de ablação para quantificar a contribuição individual de cada sensor. Somente
+após essas etapas faz sentido migrar a montagem para um drone, avaliar
+vibrações e movimento tridimensional e comparar técnicas probabilísticas de
+fusão, como filtro de Kalman estendido ou otimização em grafo.
