@@ -1,0 +1,945 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 3.3 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated by
+% biber as required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+
+\refsection{0}
+  \datalist[entry]{nyt/global//global/global/global}
+    \entry{adafruit2026mpu6050}{online}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=b65705aa9f138bcc5db4617809413e90}{%
+           family={{Adafruit Industries}},
+           familyi={A\bibinitperiod}}}%
+      }
+      \strng{namehash}{b65705aa9f138bcc5db4617809413e90}
+      \strng{fullhash}{b65705aa9f138bcc5db4617809413e90}
+      \strng{fullhashraw}{b65705aa9f138bcc5db4617809413e90}
+      \strng{bibnamehash}{b65705aa9f138bcc5db4617809413e90}
+      \strng{authorbibnamehash}{b65705aa9f138bcc5db4617809413e90}
+      \strng{authornamehash}{b65705aa9f138bcc5db4617809413e90}
+      \strng{authorfullhash}{b65705aa9f138bcc5db4617809413e90}
+      \strng{authorfullhashraw}{b65705aa9f138bcc5db4617809413e90}
+      \field{extraname}{1}
+      \field{sortinit}{A}
+      \field{sortinithash}{2f401846e2029bad6b3ecc16d50031e2}
+      \field{extradate}{1}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{note}{Página de produto consultada para referência de preço}
+      \field{title}{{Adafruit MPU-6050 6-DoF Accel and Gyro Sensor -- STEMMA QT Qwiic}}
+      \field{urlday}{23}
+      \field{urlmonth}{6}
+      \field{urlyear}{2026}
+      \field{year}{2026}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://www.adafruit.com/product/3886
+      \endverb
+      \verb{url}
+      \verb https://www.adafruit.com/product/3886
+      \endverb
+    \endentry
+    \entry{adafruit2026vl53l1x}{online}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=b65705aa9f138bcc5db4617809413e90}{%
+           family={{Adafruit Industries}},
+           familyi={A\bibinitperiod}}}%
+      }
+      \strng{namehash}{b65705aa9f138bcc5db4617809413e90}
+      \strng{fullhash}{b65705aa9f138bcc5db4617809413e90}
+      \strng{fullhashraw}{b65705aa9f138bcc5db4617809413e90}
+      \strng{bibnamehash}{b65705aa9f138bcc5db4617809413e90}
+      \strng{authorbibnamehash}{b65705aa9f138bcc5db4617809413e90}
+      \strng{authornamehash}{b65705aa9f138bcc5db4617809413e90}
+      \strng{authorfullhash}{b65705aa9f138bcc5db4617809413e90}
+      \strng{authorfullhashraw}{b65705aa9f138bcc5db4617809413e90}
+      \field{extraname}{2}
+      \field{sortinit}{A}
+      \field{sortinithash}{2f401846e2029bad6b3ecc16d50031e2}
+      \field{extradate}{2}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{note}{Página de produto consultada para referência de preço}
+      \field{title}{{Adafruit VL53L1X Time of Flight Distance Sensor -- STEMMA QT / Qwiic}}
+      \field{urlday}{23}
+      \field{urlmonth}{6}
+      \field{urlyear}{2026}
+      \field{year}{2026}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://www.adafruit.com/product/3967
+      \endverb
+      \verb{url}
+      \verb https://www.adafruit.com/product/3967
+      \endverb
+    \endentry
+    \entry{beardMcLain2012}{book}{}{}
+      \name{author}{2}{}{%
+        {{un=0,uniquepart=base,hash=31202dc567c14cdad27077b94672f7ea}{%
+           family={Beard},
+           familyi={B\bibinitperiod},
+           given={Randal\bibnamedelima W.},
+           giveni={R\bibinitperiod\bibinitdelim W\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=8c867ef5eb3b7279701cc97b35988d55}{%
+           family={McLain},
+           familyi={M\bibinitperiod},
+           given={Timothy\bibnamedelima W.},
+           giveni={T\bibinitperiod\bibinitdelim W\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{1}{%
+        {Princeton University Press}%
+      }
+      \strng{namehash}{bbe10ba64615fbffe34f97523b362d0e}
+      \strng{fullhash}{bbe10ba64615fbffe34f97523b362d0e}
+      \strng{fullhashraw}{bbe10ba64615fbffe34f97523b362d0e}
+      \strng{bibnamehash}{bbe10ba64615fbffe34f97523b362d0e}
+      \strng{authorbibnamehash}{bbe10ba64615fbffe34f97523b362d0e}
+      \strng{authornamehash}{bbe10ba64615fbffe34f97523b362d0e}
+      \strng{authorfullhash}{bbe10ba64615fbffe34f97523b362d0e}
+      \strng{authorfullhashraw}{bbe10ba64615fbffe34f97523b362d0e}
+      \field{sortinit}{B}
+      \field{sortinithash}{d7095fff47cda75ca2589920aae98399}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{isbn}{9780691149219}
+      \field{title}{Small Unmanned Aircraft: Theory and Practice}
+      \field{year}{2012}
+    \endentry
+    \entry{caveatronDiscuss2023cost}{online}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=24a1218508a9f7dbc92c5d20c8ecbaf0}{%
+           family={{Caveatron Discuss}},
+           familyi={C\bibinitperiod}}}%
+      }
+      \strng{namehash}{24a1218508a9f7dbc92c5d20c8ecbaf0}
+      \strng{fullhash}{24a1218508a9f7dbc92c5d20c8ecbaf0}
+      \strng{fullhashraw}{24a1218508a9f7dbc92c5d20c8ecbaf0}
+      \strng{bibnamehash}{24a1218508a9f7dbc92c5d20c8ecbaf0}
+      \strng{authorbibnamehash}{24a1218508a9f7dbc92c5d20c8ecbaf0}
+      \strng{authornamehash}{24a1218508a9f7dbc92c5d20c8ecbaf0}
+      \strng{authorfullhash}{24a1218508a9f7dbc92c5d20c8ecbaf0}
+      \strng{authorfullhashraw}{24a1218508a9f7dbc92c5d20c8ecbaf0}
+      \field{sortinit}{C}
+      \field{sortinithash}{4d103a86280481745c9c897c925753c0}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{note}{Discussão pública de 23 jun. 2023 com relato de custo aproximado de construção}
+      \field{title}{{Recent Successful Build, some feedback/tips}}
+      \field{urlday}{23}
+      \field{urlmonth}{6}
+      \field{urlyear}{2026}
+      \field{year}{2023}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://groups.google.com/g/caveatron-discuss/c/s2288F3tb9k
+      \endverb
+      \verb{url}
+      \verb https://groups.google.com/g/caveatron-discuss/c/s2288F3tb9k
+      \endverb
+    \endentry
+    \entry{caveatron2026official}{online}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=acd126f1ac2053d10d53586e12a544fe}{%
+           family={{Caveatron Project}},
+           familyi={C\bibinitperiod}}}%
+      }
+      \strng{namehash}{acd126f1ac2053d10d53586e12a544fe}
+      \strng{fullhash}{acd126f1ac2053d10d53586e12a544fe}
+      \strng{fullhashraw}{acd126f1ac2053d10d53586e12a544fe}
+      \strng{bibnamehash}{acd126f1ac2053d10d53586e12a544fe}
+      \strng{authorbibnamehash}{acd126f1ac2053d10d53586e12a544fe}
+      \strng{authornamehash}{acd126f1ac2053d10d53586e12a544fe}
+      \strng{authorfullhash}{acd126f1ac2053d10d53586e12a544fe}
+      \strng{authorfullhashraw}{acd126f1ac2053d10d53586e12a544fe}
+      \field{sortinit}{C}
+      \field{sortinithash}{4d103a86280481745c9c897c925753c0}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{note}{Página oficial consultada para características, disponibilidade e condição de projeto aberto}
+      \field{title}{{Caveatron}}
+      \field{urlday}{23}
+      \field{urlmonth}{6}
+      \field{urlyear}{2026}
+      \field{year}{2026}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://caveatron.com/
+      \endverb
+      \verb{url}
+      \verb https://caveatron.com/
+      \endverb
+    \endentry
+    \entry{diebel2006}{report}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=4d20f0c0cb583117558cdb16b3faa730}{%
+           family={Diebel},
+           familyi={D\bibinitperiod},
+           given={James},
+           giveni={J\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{institution}{1}{%
+        {Stanford University}%
+      }
+      \strng{namehash}{4d20f0c0cb583117558cdb16b3faa730}
+      \strng{fullhash}{4d20f0c0cb583117558cdb16b3faa730}
+      \strng{fullhashraw}{4d20f0c0cb583117558cdb16b3faa730}
+      \strng{bibnamehash}{4d20f0c0cb583117558cdb16b3faa730}
+      \strng{authorbibnamehash}{4d20f0c0cb583117558cdb16b3faa730}
+      \strng{authornamehash}{4d20f0c0cb583117558cdb16b3faa730}
+      \strng{authorfullhash}{4d20f0c0cb583117558cdb16b3faa730}
+      \strng{authorfullhashraw}{4d20f0c0cb583117558cdb16b3faa730}
+      \field{sortinit}{D}
+      \field{sortinithash}{6f385f66841fb5e82009dc833c761848}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Representing Attitude: Euler Angles, Unit Quaternions, and Rotation Vectors}
+      \field{type}{Technical report}
+      \field{year}{2006}
+    \endentry
+    \entry{farrell2008aided}{book}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=c29329c7dc901daea6475404da073b47}{%
+           family={Farrell},
+           familyi={F\bibinitperiod},
+           given={Jay\bibnamedelima A.},
+           giveni={J\bibinitperiod\bibinitdelim A\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{1}{%
+        {McGraw-Hill}%
+      }
+      \strng{namehash}{c29329c7dc901daea6475404da073b47}
+      \strng{fullhash}{c29329c7dc901daea6475404da073b47}
+      \strng{fullhashraw}{c29329c7dc901daea6475404da073b47}
+      \strng{bibnamehash}{c29329c7dc901daea6475404da073b47}
+      \strng{authorbibnamehash}{c29329c7dc901daea6475404da073b47}
+      \strng{authornamehash}{c29329c7dc901daea6475404da073b47}
+      \strng{authorfullhash}{c29329c7dc901daea6475404da073b47}
+      \strng{authorfullhashraw}{c29329c7dc901daea6475404da073b47}
+      \field{sortinit}{F}
+      \field{sortinithash}{2638baaa20439f1b5a8f80c6c08a13b4}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{isbn}{9780071493291}
+      \field{title}{Aided Navigation: {GPS} with High Rate Sensors}
+      \field{year}{2008}
+    \endentry
+    \entry{groves2013principles}{book}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=3393e4433194d61b91167d137548c370}{%
+           family={Groves},
+           familyi={G\bibinitperiod},
+           given={Paul\bibnamedelima D.},
+           giveni={P\bibinitperiod\bibinitdelim D\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{1}{%
+        {Artech House}%
+      }
+      \strng{namehash}{3393e4433194d61b91167d137548c370}
+      \strng{fullhash}{3393e4433194d61b91167d137548c370}
+      \strng{fullhashraw}{3393e4433194d61b91167d137548c370}
+      \strng{bibnamehash}{3393e4433194d61b91167d137548c370}
+      \strng{authorbibnamehash}{3393e4433194d61b91167d137548c370}
+      \strng{authornamehash}{3393e4433194d61b91167d137548c370}
+      \strng{authorfullhash}{3393e4433194d61b91167d137548c370}
+      \strng{authorfullhashraw}{3393e4433194d61b91167d137548c370}
+      \field{sortinit}{G}
+      \field{sortinithash}{32d67eca0634bf53703493fb1090a2e8}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{edition}{2}
+      \field{isbn}{9781608070053}
+      \field{title}{Principles of {GNSS}, Inertial, and Multisensor Integrated Navigation Systems}
+      \field{year}{2013}
+    \endentry
+    \entry{lucasKanade1981}{inproceedings}{}{}
+      \name{author}{2}{}{%
+        {{un=0,uniquepart=base,hash=5b585aab440fc778bb3308e1bb796835}{%
+           family={Lucas},
+           familyi={L\bibinitperiod},
+           given={Bruce\bibnamedelima D.},
+           giveni={B\bibinitperiod\bibinitdelim D\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=45496c6a7530cfbfb4f3218a2602b77e}{%
+           family={Kanade},
+           familyi={K\bibinitperiod},
+           given={Takeo},
+           giveni={T\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{3f6e6235f17e67f226364a2658f6e419}
+      \strng{fullhash}{3f6e6235f17e67f226364a2658f6e419}
+      \strng{fullhashraw}{3f6e6235f17e67f226364a2658f6e419}
+      \strng{bibnamehash}{3f6e6235f17e67f226364a2658f6e419}
+      \strng{authorbibnamehash}{3f6e6235f17e67f226364a2658f6e419}
+      \strng{authornamehash}{3f6e6235f17e67f226364a2658f6e419}
+      \strng{authorfullhash}{3f6e6235f17e67f226364a2658f6e419}
+      \strng{authorfullhashraw}{3f6e6235f17e67f226364a2658f6e419}
+      \field{sortinit}{L}
+      \field{sortinithash}{7c47d417cecb1f4bd38d1825c427a61a}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Proceedings of the 7th International Joint Conference on Artificial Intelligence}
+      \field{title}{An Iterative Image Registration Technique with an Application to Stereo Vision}
+      \field{year}{1981}
+      \field{pages}{674\bibrangedash 679}
+      \range{pages}{6}
+    \endentry
+    \entry{madgwick2010efficient}{report}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=907c1fecd31054023a0459215498ad74}{%
+           family={Madgwick},
+           familyi={M\bibinitperiod},
+           given={Sebastian\bibnamedelimb O.\bibnamedelimi H.},
+           giveni={S\bibinitperiod\bibinitdelim O\bibinitperiod\bibinitdelim H\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{institution}{2}{%
+        {x-io}%
+        {University of Bristol}%
+      }
+      \strng{namehash}{907c1fecd31054023a0459215498ad74}
+      \strng{fullhash}{907c1fecd31054023a0459215498ad74}
+      \strng{fullhashraw}{907c1fecd31054023a0459215498ad74}
+      \strng{bibnamehash}{907c1fecd31054023a0459215498ad74}
+      \strng{authorbibnamehash}{907c1fecd31054023a0459215498ad74}
+      \strng{authornamehash}{907c1fecd31054023a0459215498ad74}
+      \strng{authorfullhash}{907c1fecd31054023a0459215498ad74}
+      \strng{authorfullhashraw}{907c1fecd31054023a0459215498ad74}
+      \field{sortinit}{M}
+      \field{sortinithash}{4625c616857f13d17ce56f7d4f97d451}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{An Efficient Orientation Filter for Inertial and Inertial/Magnetic Sensor Arrays}
+      \field{type}{Technical report}
+      \field{urlday}{9}
+      \field{urlmonth}{6}
+      \field{urlyear}{2026}
+      \field{year}{2010}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://x-io.co.uk/res/doc/madgwick_internal_report.pdf
+      \endverb
+      \verb{url}
+      \verb https://x-io.co.uk/res/doc/madgwick_internal_report.pdf
+      \endverb
+    \endentry
+    \entry{otsu1979threshold}{article}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=4c9490b4888796e772e507d10bb89b3f}{%
+           family={Otsu},
+           familyi={O\bibinitperiod},
+           given={Nobuyuki},
+           giveni={N\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{4c9490b4888796e772e507d10bb89b3f}
+      \strng{fullhash}{4c9490b4888796e772e507d10bb89b3f}
+      \strng{fullhashraw}{4c9490b4888796e772e507d10bb89b3f}
+      \strng{bibnamehash}{4c9490b4888796e772e507d10bb89b3f}
+      \strng{authorbibnamehash}{4c9490b4888796e772e507d10bb89b3f}
+      \strng{authornamehash}{4c9490b4888796e772e507d10bb89b3f}
+      \strng{authorfullhash}{4c9490b4888796e772e507d10bb89b3f}
+      \strng{authorfullhashraw}{4c9490b4888796e772e507d10bb89b3f}
+      \field{sortinit}{O}
+      \field{sortinithash}{2cd7140a07aea5341f9e2771efe90aae}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{IEEE Transactions on Systems, Man, and Cybernetics}
+      \field{number}{1}
+      \field{title}{A Threshold Selection Method from Gray-Level Histograms}
+      \field{volume}{9}
+      \field{year}{1979}
+      \field{pages}{62\bibrangedash 66}
+      \range{pages}{5}
+      \verb{doi}
+      \verb 10.1109/TSMC.1979.4310076
+      \endverb
+    \endentry
+    \entry{pixart2017pmw3901}{manual}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=d0c14073a97fcac6864d0750cfdfc6cc}{%
+           family={{PixArt Imaging Inc.}},
+           familyi={P\bibinitperiod}}}%
+      }
+      \strng{namehash}{d0c14073a97fcac6864d0750cfdfc6cc}
+      \strng{fullhash}{d0c14073a97fcac6864d0750cfdfc6cc}
+      \strng{fullhashraw}{d0c14073a97fcac6864d0750cfdfc6cc}
+      \strng{bibnamehash}{d0c14073a97fcac6864d0750cfdfc6cc}
+      \strng{authorbibnamehash}{d0c14073a97fcac6864d0750cfdfc6cc}
+      \strng{authornamehash}{d0c14073a97fcac6864d0750cfdfc6cc}
+      \strng{authorfullhash}{d0c14073a97fcac6864d0750cfdfc6cc}
+      \strng{authorfullhashraw}{d0c14073a97fcac6864d0750cfdfc6cc}
+      \field{sortinit}{P}
+      \field{sortinithash}{ff3bcf24f47321b42cb156c2cc8a8422}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{note}{Version 1.00, 20 Mar. 2017}
+      \field{title}{{PMW3901MB-TXQT}: Optical Motion Tracking Chip Product Datasheet}
+      \field{urlday}{9}
+      \field{urlmonth}{6}
+      \field{urlyear}{2026}
+      \field{year}{2017}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://www.digikey.com/htmldatasheets/production/2456773/0/0/1/pmw3901mb.pdf
+      \endverb
+      \verb{url}
+      \verb https://www.digikey.com/htmldatasheets/production/2456773/0/0/1/pmw3901mb.pdf
+      \endverb
+    \endentry
+    \entry{raspberrypi2026pico}{online}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=abdff8c3bc7ac1a29e4f7edc008fe26b}{%
+           family={{Raspberry Pi Ltd}},
+           familyi={R\bibinitperiod}}}%
+      }
+      \strng{namehash}{abdff8c3bc7ac1a29e4f7edc008fe26b}
+      \strng{fullhash}{abdff8c3bc7ac1a29e4f7edc008fe26b}
+      \strng{fullhashraw}{abdff8c3bc7ac1a29e4f7edc008fe26b}
+      \strng{bibnamehash}{abdff8c3bc7ac1a29e4f7edc008fe26b}
+      \strng{authorbibnamehash}{abdff8c3bc7ac1a29e4f7edc008fe26b}
+      \strng{authornamehash}{abdff8c3bc7ac1a29e4f7edc008fe26b}
+      \strng{authorfullhash}{abdff8c3bc7ac1a29e4f7edc008fe26b}
+      \strng{authorfullhashraw}{abdff8c3bc7ac1a29e4f7edc008fe26b}
+      \field{sortinit}{R}
+      \field{sortinithash}{5e1c39a9d46ffb6bebd8f801023a9486}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{note}{Página de produto consultada para referência de preço e especificações}
+      \field{title}{Raspberry Pi Pico}
+      \field{urlday}{23}
+      \field{urlmonth}{6}
+      \field{urlyear}{2026}
+      \field{year}{2026}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://www.raspberrypi.com/products/raspberry-pi-pico/
+      \endverb
+      \verb{url}
+      \verb https://www.raspberrypi.com/products/raspberry-pi-pico/
+      \endverb
+    \endentry
+    \entry{rusu20113d}{inproceedings}{}{}
+      \name{author}{2}{}{%
+        {{un=0,uniquepart=base,hash=efa72a89c39f88310fbf5072cdca42e3}{%
+           family={Rusu},
+           familyi={R\bibinitperiod},
+           given={Radu\bibnamedelima Bogdan},
+           giveni={R\bibinitperiod\bibinitdelim B\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=6e48c0bbf1da12af63cf1231c2d2ba32}{%
+           family={Cousins},
+           familyi={C\bibinitperiod},
+           given={Steve},
+           giveni={S\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{5678ccc2a6fe34d7c20fb50e90607b59}
+      \strng{fullhash}{5678ccc2a6fe34d7c20fb50e90607b59}
+      \strng{fullhashraw}{5678ccc2a6fe34d7c20fb50e90607b59}
+      \strng{bibnamehash}{5678ccc2a6fe34d7c20fb50e90607b59}
+      \strng{authorbibnamehash}{5678ccc2a6fe34d7c20fb50e90607b59}
+      \strng{authornamehash}{5678ccc2a6fe34d7c20fb50e90607b59}
+      \strng{authorfullhash}{5678ccc2a6fe34d7c20fb50e90607b59}
+      \strng{authorfullhashraw}{5678ccc2a6fe34d7c20fb50e90607b59}
+      \field{sortinit}{R}
+      \field{sortinithash}{5e1c39a9d46ffb6bebd8f801023a9486}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{2011 IEEE International Conference on Robotics and Automation}
+      \field{title}{{3D} Is Here: Point Cloud Library ({PCL})}
+      \field{urlday}{9}
+      \field{urlmonth}{6}
+      \field{urlyear}{2026}
+      \field{year}{2011}
+      \field{urldateera}{ce}
+      \field{pages}{1\bibrangedash 4}
+      \range{pages}{4}
+      \verb{doi}
+      \verb 10.1109/ICRA.2011.5980567
+      \endverb
+      \verb{urlraw}
+      \verb https://pointclouds.org/assets/pdf/pcl_icra2011.pdf
+      \endverb
+      \verb{url}
+      \verb https://pointclouds.org/assets/pdf/pcl_icra2011.pdf
+      \endverb
+    \endentry
+    \entry{sensorlidar2026stl06p}{online}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=aca9fc831ff7f90cada5c6baf3cd3425}{%
+           family={{Sensorlidar}},
+           familyi={S\bibinitperiod}}}%
+      }
+      \strng{namehash}{aca9fc831ff7f90cada5c6baf3cd3425}
+      \strng{fullhash}{aca9fc831ff7f90cada5c6baf3cd3425}
+      \strng{fullhashraw}{aca9fc831ff7f90cada5c6baf3cd3425}
+      \strng{bibnamehash}{aca9fc831ff7f90cada5c6baf3cd3425}
+      \strng{authorbibnamehash}{aca9fc831ff7f90cada5c6baf3cd3425}
+      \strng{authornamehash}{aca9fc831ff7f90cada5c6baf3cd3425}
+      \strng{authorfullhash}{aca9fc831ff7f90cada5c6baf3cd3425}
+      \strng{authorfullhashraw}{aca9fc831ff7f90cada5c6baf3cd3425}
+      \field{sortinit}{S}
+      \field{sortinithash}{b164b07b29984b41daf1e85279fbc5ab}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{note}{Página de produto consultada para referência de preço; modelo apresentado como substituto do LD06}
+      \field{title}{{LDROBOT STL-06P LiDAR Outdoor Light Resistance 60Klx 5000Hz 12m 360 Scanning Support ROS1 and ROS2}}
+      \field{urlday}{23}
+      \field{urlmonth}{6}
+      \field{urlyear}{2026}
+      \field{year}{2026}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://www.sensorlidar.com/products/ldrobot-stl-06p-lidar-outdoor-light-resistance-60klx-5000hz-12m-360-scanning-support-ros1-and-ros2-replaces-ld06-lidar
+      \endverb
+      \verb{url}
+      \verb https://www.sensorlidar.com/products/ldrobot-stl-06p-lidar-outdoor-light-resistance-60klx-5000hz-12m-360-scanning-support-ros1-and-ros2-replaces-ld06-lidar
+      \endverb
+    \endentry
+    \entry{ldrobot2019ld06}{manual}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=18635e178a820be6a6932cdea2daa81d}{%
+           family={{Shenzhen LDROBOT Co., Ltd.}},
+           familyi={S\bibinitperiod}}}%
+      }
+      \strng{namehash}{18635e178a820be6a6932cdea2daa81d}
+      \strng{fullhash}{18635e178a820be6a6932cdea2daa81d}
+      \strng{fullhashraw}{18635e178a820be6a6932cdea2daa81d}
+      \strng{bibnamehash}{18635e178a820be6a6932cdea2daa81d}
+      \strng{authorbibnamehash}{18635e178a820be6a6932cdea2daa81d}
+      \strng{authornamehash}{18635e178a820be6a6932cdea2daa81d}
+      \strng{authorfullhash}{18635e178a820be6a6932cdea2daa81d}
+      \strng{authorfullhashraw}{18635e178a820be6a6932cdea2daa81d}
+      \field{sortinit}{S}
+      \field{sortinithash}{b164b07b29984b41daf1e85279fbc5ab}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{{LD06} Data Sheet: Super Mini {DTOF} Principle Lidar}
+      \field{urlday}{9}
+      \field{urlmonth}{6}
+      \field{urlyear}{2026}
+      \field{year}{2019}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://www.yahboom.net/xiazai/LiDar-LD06/LDROBOT_LD06_Datasheet.pdf
+      \endverb
+      \verb{url}
+      \verb https://www.yahboom.net/xiazai/LiDar-LD06/LDROBOT_LD06_Datasheet.pdf
+      \endverb
+    \endentry
+    \entry{siciliano2009robotics}{book}{}{}
+      \name{author}{4}{}{%
+        {{un=0,uniquepart=base,hash=38f7a70abf2d86e432d63826f560ab93}{%
+           family={Siciliano},
+           familyi={S\bibinitperiod},
+           given={Bruno},
+           giveni={B\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=8ee631ade831cd9df4fdd3ecba074704}{%
+           family={Sciavicco},
+           familyi={S\bibinitperiod},
+           given={Lorenzo},
+           giveni={L\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=ff3e3865edda89166207ec2d8a4c22aa}{%
+           family={Villani},
+           familyi={V\bibinitperiod},
+           given={Luigi},
+           giveni={L\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=dcc89269b2eb1155024b2da9fd7c68eb}{%
+           family={Oriolo},
+           familyi={O\bibinitperiod},
+           given={Giuseppe},
+           giveni={G\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{1}{%
+        {Springer}%
+      }
+      \strng{namehash}{87b7a62a01263043a997b937dfe79845}
+      \strng{fullhash}{ee90168e098b65fb796c51b65c7348da}
+      \strng{fullhashraw}{ee90168e098b65fb796c51b65c7348da}
+      \strng{bibnamehash}{ee90168e098b65fb796c51b65c7348da}
+      \strng{authorbibnamehash}{ee90168e098b65fb796c51b65c7348da}
+      \strng{authornamehash}{87b7a62a01263043a997b937dfe79845}
+      \strng{authorfullhash}{ee90168e098b65fb796c51b65c7348da}
+      \strng{authorfullhashraw}{ee90168e098b65fb796c51b65c7348da}
+      \field{sortinit}{S}
+      \field{sortinithash}{b164b07b29984b41daf1e85279fbc5ab}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{isbn}{9781846286414}
+      \field{title}{Robotics: Modelling, Planning and Control}
+      \field{year}{2009}
+      \verb{doi}
+      \verb 10.1007/978-1-84628-642-1
+      \endverb
+    \endentry
+    \entry{sparkfun2026microsdCard}{online}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=9e35b5f4c8cbe2dda7c8b041ef261f70}{%
+           family={{SparkFun Electronics}},
+           familyi={S\bibinitperiod}}}%
+      }
+      \strng{namehash}{9e35b5f4c8cbe2dda7c8b041ef261f70}
+      \strng{fullhash}{9e35b5f4c8cbe2dda7c8b041ef261f70}
+      \strng{fullhashraw}{9e35b5f4c8cbe2dda7c8b041ef261f70}
+      \strng{bibnamehash}{9e35b5f4c8cbe2dda7c8b041ef261f70}
+      \strng{authorbibnamehash}{9e35b5f4c8cbe2dda7c8b041ef261f70}
+      \strng{authornamehash}{9e35b5f4c8cbe2dda7c8b041ef261f70}
+      \strng{authorfullhash}{9e35b5f4c8cbe2dda7c8b041ef261f70}
+      \strng{authorfullhashraw}{9e35b5f4c8cbe2dda7c8b041ef261f70}
+      \field{extraname}{1}
+      \field{sortinit}{S}
+      \field{sortinithash}{b164b07b29984b41daf1e85279fbc5ab}
+      \field{extradate}{1}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{note}{Página de produto consultada para referência de preço; item descontinuado}
+      \field{title}{{microSD Card - 16GB (Class 10)}}
+      \field{urlday}{23}
+      \field{urlmonth}{6}
+      \field{urlyear}{2026}
+      \field{year}{2026}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://www.sparkfun.com/microsd-card-16gb-class-10.html
+      \endverb
+      \verb{url}
+      \verb https://www.sparkfun.com/microsd-card-16gb-class-10.html
+      \endverb
+    \endentry
+    \entry{sparkfun2026microsdBreakout}{online}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=9e35b5f4c8cbe2dda7c8b041ef261f70}{%
+           family={{SparkFun Electronics}},
+           familyi={S\bibinitperiod}}}%
+      }
+      \strng{namehash}{9e35b5f4c8cbe2dda7c8b041ef261f70}
+      \strng{fullhash}{9e35b5f4c8cbe2dda7c8b041ef261f70}
+      \strng{fullhashraw}{9e35b5f4c8cbe2dda7c8b041ef261f70}
+      \strng{bibnamehash}{9e35b5f4c8cbe2dda7c8b041ef261f70}
+      \strng{authorbibnamehash}{9e35b5f4c8cbe2dda7c8b041ef261f70}
+      \strng{authornamehash}{9e35b5f4c8cbe2dda7c8b041ef261f70}
+      \strng{authorfullhash}{9e35b5f4c8cbe2dda7c8b041ef261f70}
+      \strng{authorfullhashraw}{9e35b5f4c8cbe2dda7c8b041ef261f70}
+      \field{extraname}{2}
+      \field{sortinit}{S}
+      \field{sortinithash}{b164b07b29984b41daf1e85279fbc5ab}
+      \field{extradate}{2}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{note}{Página de produto consultada para referência de preço}
+      \field{title}{{SparkFun microSD Transflash Breakout}}
+      \field{urlday}{23}
+      \field{urlmonth}{6}
+      \field{urlyear}{2026}
+      \field{year}{2026}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://www.sparkfun.com/sparkfun-microsd-transflash-breakout.html
+      \endverb
+      \verb{url}
+      \verb https://www.sparkfun.com/sparkfun-microsd-transflash-breakout.html
+      \endverb
+    \endentry
+    \entry{sparkfun2026qwiicCableKit}{online}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=9e35b5f4c8cbe2dda7c8b041ef261f70}{%
+           family={{SparkFun Electronics}},
+           familyi={S\bibinitperiod}}}%
+      }
+      \strng{namehash}{9e35b5f4c8cbe2dda7c8b041ef261f70}
+      \strng{fullhash}{9e35b5f4c8cbe2dda7c8b041ef261f70}
+      \strng{fullhashraw}{9e35b5f4c8cbe2dda7c8b041ef261f70}
+      \strng{bibnamehash}{9e35b5f4c8cbe2dda7c8b041ef261f70}
+      \strng{authorbibnamehash}{9e35b5f4c8cbe2dda7c8b041ef261f70}
+      \strng{authornamehash}{9e35b5f4c8cbe2dda7c8b041ef261f70}
+      \strng{authorfullhash}{9e35b5f4c8cbe2dda7c8b041ef261f70}
+      \strng{authorfullhashraw}{9e35b5f4c8cbe2dda7c8b041ef261f70}
+      \field{extraname}{3}
+      \field{sortinit}{S}
+      \field{sortinithash}{b164b07b29984b41daf1e85279fbc5ab}
+      \field{extradate}{3}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{note}{Página de produto consultada para referência de preço}
+      \field{title}{{SparkFun Qwiic Cable Kit}}
+      \field{urlday}{23}
+      \field{urlmonth}{6}
+      \field{urlyear}{2026}
+      \field{year}{2026}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://www.sparkfun.com/sparkfun-qwiic-cable-kit.html
+      \endverb
+      \verb{url}
+      \verb https://www.sparkfun.com/sparkfun-qwiic-cable-kit.html
+      \endverb
+    \endentry
+    \entry{stmicroelectronics2024vl53l1x}{manual}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=c38884ab3cf908c2798725960369391b}{%
+           family={{STMicroelectronics}},
+           familyi={S\bibinitperiod}}}%
+      }
+      \strng{namehash}{c38884ab3cf908c2798725960369391b}
+      \strng{fullhash}{c38884ab3cf908c2798725960369391b}
+      \strng{fullhashraw}{c38884ab3cf908c2798725960369391b}
+      \strng{bibnamehash}{c38884ab3cf908c2798725960369391b}
+      \strng{authorbibnamehash}{c38884ab3cf908c2798725960369391b}
+      \strng{authornamehash}{c38884ab3cf908c2798725960369391b}
+      \strng{authorfullhash}{c38884ab3cf908c2798725960369391b}
+      \strng{authorfullhashraw}{c38884ab3cf908c2798725960369391b}
+      \field{sortinit}{S}
+      \field{sortinithash}{b164b07b29984b41daf1e85279fbc5ab}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{note}{Datasheet DS12385, Rev. 8, Aug. 2024}
+      \field{title}{{VL53L1X}: A New Generation, Long Distance Ranging Time-of-Flight Sensor Based on {ST}'s {FlightSense} Technology}
+      \field{urlday}{9}
+      \field{urlmonth}{6}
+      \field{urlyear}{2026}
+      \field{year}{2024}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://www.st.com/content/ccc/resource/technical/document/datasheet/group3/7d/85/c8/95/fb/3b/4e/2d/DM00452094/files/DM00452094.pdf/jcr:content/translations/en.DM00452094.pdf
+      \endverb
+      \verb{url}
+      \verb https://www.st.com/content/ccc/resource/technical/document/datasheet/group3/7d/85/c8/95/fb/3b/4e/2d/DM00452094/files/DM00452094.pdf/jcr:content/translations/en.DM00452094.pdf
+      \endverb
+    \endentry
+    \entry{tdk2013mpu6050register}{manual}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=800b6477ead073c30d06d5e88e01d089}{%
+           family={{TDK InvenSense}},
+           familyi={T\bibinitperiod}}}%
+      }
+      \strng{namehash}{800b6477ead073c30d06d5e88e01d089}
+      \strng{fullhash}{800b6477ead073c30d06d5e88e01d089}
+      \strng{fullhashraw}{800b6477ead073c30d06d5e88e01d089}
+      \strng{bibnamehash}{800b6477ead073c30d06d5e88e01d089}
+      \strng{authorbibnamehash}{800b6477ead073c30d06d5e88e01d089}
+      \strng{authornamehash}{800b6477ead073c30d06d5e88e01d089}
+      \strng{authorfullhash}{800b6477ead073c30d06d5e88e01d089}
+      \strng{authorfullhashraw}{800b6477ead073c30d06d5e88e01d089}
+      \field{sortinit}{T}
+      \field{sortinithash}{9af77f0292593c26bde9a56e688eaee9}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{note}{Revision 4.2, 19 Aug. 2013}
+      \field{title}{{MPU-6000} and {MPU-6050} Register Map and Descriptions}
+      \field{year}{2013}
+    \endentry
+    \entry{thrun2005probabilistic}{book}{}{}
+      \name{author}{3}{}{%
+        {{un=0,uniquepart=base,hash=5112ea130eadef0764fce0145b8b9f91}{%
+           family={Thrun},
+           familyi={T\bibinitperiod},
+           given={Sebastian},
+           giveni={S\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=98f4ab1bc2ac191d8f8a0651315ce9c0}{%
+           family={Burgard},
+           familyi={B\bibinitperiod},
+           given={Wolfram},
+           giveni={W\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=93b0c4a7857a82a8f94e256475887c74}{%
+           family={Fox},
+           familyi={F\bibinitperiod},
+           given={Dieter},
+           giveni={D\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{1}{%
+        {MIT Press}%
+      }
+      \strng{namehash}{cb3e97dbc1e8d4a631a5b656776c23d3}
+      \strng{fullhash}{cb3e97dbc1e8d4a631a5b656776c23d3}
+      \strng{fullhashraw}{cb3e97dbc1e8d4a631a5b656776c23d3}
+      \strng{bibnamehash}{cb3e97dbc1e8d4a631a5b656776c23d3}
+      \strng{authorbibnamehash}{cb3e97dbc1e8d4a631a5b656776c23d3}
+      \strng{authornamehash}{cb3e97dbc1e8d4a631a5b656776c23d3}
+      \strng{authorfullhash}{cb3e97dbc1e8d4a631a5b656776c23d3}
+      \strng{authorfullhashraw}{cb3e97dbc1e8d4a631a5b656776c23d3}
+      \field{sortinit}{T}
+      \field{sortinithash}{9af77f0292593c26bde9a56e688eaee9}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{isbn}{9780262201629}
+      \field{title}{Probabilistic Robotics}
+      \field{year}{2005}
+    \endentry
+    \entry{tittertonWeston2004}{book}{}{}
+      \name{author}{2}{}{%
+        {{un=0,uniquepart=base,hash=aa8885e4cab910cb5bd4e47aa5564107}{%
+           family={Titterton},
+           familyi={T\bibinitperiod},
+           given={David\bibnamedelima H.},
+           giveni={D\bibinitperiod\bibinitdelim H\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=c674d8d435fcb8f524e10624ccd539ab}{%
+           family={Weston},
+           familyi={W\bibinitperiod},
+           given={John\bibnamedelima L.},
+           giveni={J\bibinitperiod\bibinitdelim L\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{2}{%
+        {American Institute of Aeronautics}%
+        {Astronautics}%
+      }
+      \strng{namehash}{fee234c323b4ce30f8fb56b9f8764e96}
+      \strng{fullhash}{fee234c323b4ce30f8fb56b9f8764e96}
+      \strng{fullhashraw}{fee234c323b4ce30f8fb56b9f8764e96}
+      \strng{bibnamehash}{fee234c323b4ce30f8fb56b9f8764e96}
+      \strng{authorbibnamehash}{fee234c323b4ce30f8fb56b9f8764e96}
+      \strng{authornamehash}{fee234c323b4ce30f8fb56b9f8764e96}
+      \strng{authorfullhash}{fee234c323b4ce30f8fb56b9f8764e96}
+      \strng{authorfullhashraw}{fee234c323b4ce30f8fb56b9f8764e96}
+      \field{sortinit}{T}
+      \field{sortinithash}{9af77f0292593c26bde9a56e688eaee9}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{edition}{2}
+      \field{isbn}{9781563476938}
+      \field{title}{Strapdown Inertial Navigation Technology}
+      \field{year}{2004}
+    \endentry
+    \entry{tukey1977eda}{book}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=9edab5dbc1987bcb98d6de058f00fc47}{%
+           family={Tukey},
+           familyi={T\bibinitperiod},
+           given={John\bibnamedelima W.},
+           giveni={J\bibinitperiod\bibinitdelim W\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{1}{%
+        {Addison-Wesley}%
+      }
+      \strng{namehash}{9edab5dbc1987bcb98d6de058f00fc47}
+      \strng{fullhash}{9edab5dbc1987bcb98d6de058f00fc47}
+      \strng{fullhashraw}{9edab5dbc1987bcb98d6de058f00fc47}
+      \strng{bibnamehash}{9edab5dbc1987bcb98d6de058f00fc47}
+      \strng{authorbibnamehash}{9edab5dbc1987bcb98d6de058f00fc47}
+      \strng{authornamehash}{9edab5dbc1987bcb98d6de058f00fc47}
+      \strng{authorfullhash}{9edab5dbc1987bcb98d6de058f00fc47}
+      \strng{authorfullhashraw}{9edab5dbc1987bcb98d6de058f00fc47}
+      \field{sortinit}{T}
+      \field{sortinithash}{9af77f0292593c26bde9a56e688eaee9}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Exploratory Data Analysis}
+      \field{year}{1977}
+    \endentry
+    \entry{worldDroneMarket2026pmw3901}{online}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=24099ad78c4bbc7306bc3ba670c3a10b}{%
+           family={{World Drone Market}},
+           familyi={W\bibinitperiod}}}%
+      }
+      \strng{namehash}{24099ad78c4bbc7306bc3ba670c3a10b}
+      \strng{fullhash}{24099ad78c4bbc7306bc3ba670c3a10b}
+      \strng{fullhashraw}{24099ad78c4bbc7306bc3ba670c3a10b}
+      \strng{bibnamehash}{24099ad78c4bbc7306bc3ba670c3a10b}
+      \strng{authorbibnamehash}{24099ad78c4bbc7306bc3ba670c3a10b}
+      \strng{authornamehash}{24099ad78c4bbc7306bc3ba670c3a10b}
+      \strng{authorfullhash}{24099ad78c4bbc7306bc3ba670c3a10b}
+      \strng{authorfullhashraw}{24099ad78c4bbc7306bc3ba670c3a10b}
+      \field{sortinit}{W}
+      \field{sortinithash}{4315d78024d0cea9b57a0c6f0e35ed0d}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{note}{Página de produto consultada para referência de preço}
+      \field{title}{{Holybro PMW3901 Optical Flow Sensor}}
+      \field{urlday}{23}
+      \field{urlmonth}{6}
+      \field{urlyear}{2026}
+      \field{year}{2026}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://www.worldronemarket.com/product/holybro-pmw3901-optical-flow-sensor/
+      \endverb
+      \verb{url}
+      \verb https://www.worldronemarket.com/product/holybro-pmw3901-optical-flow-sensor/
+      \endverb
+    \endentry
+  \enddatalist
+\endrefsection
+\endinput
+
