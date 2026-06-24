@@ -2500,6 +2500,8 @@
     <bcf:citekey order="42" intorder="2">caveatronDiscuss2023cost</bcf:citekey>
     <bcf:citekey order="43" intorder="1">caveatron2026official</bcf:citekey>
     <bcf:citekey order="44" intorder="1">caveatronDiscuss2023cost</bcf:citekey>
+    <bcf:citekey order="45" intorder="1">lucasKanade1981</bcf:citekey>
+    <bcf:citekey order="45" intorder="2">pixart2017pmw3901</bcf:citekey>
   </bcf:section>
   <!-- SORTING TEMPLATES -->
   <bcf:sortingtemplate name="nyt">
