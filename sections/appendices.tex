@@ -1,5 +1,13 @@
-\clearpage
-\section{Pipeline de processamento da IMU e do sensor óptico}
+% Cada artefato autoral é apresentado em um apêndice próprio. O comando abaixo
+% mantém a referência alfabética (A, B, C) e explicita "APÊNDICE" no título.
+\newcommand{\apendicesection}[1]{%
+    \clearpage
+    \refstepcounter{section}%
+    \section*{APÊNDICE \thesection{}, #1}%
+    \addcontentsline{toc}{section}{APÊNDICE \thesection{}, #1}%
+}
+
+\apendicesection{Pipeline de processamento da IMU e do sensor óptico}
 \label{ap:posicao}
 
 O notebook complementar \path{imu_pipeline_flow_v2.ipynb} registra a etapa que converte as leituras inerciais, estima o viés dos giroscópios, filtra e combina as duas IMUs, calcula a atitude pelo filtro de Madgwick e acumula os incrementos do sensor óptico corrigidos pelo ToF. Seus produtos principais são a posição relativa e a atitude associadas aos instantes de aquisição do LiDAR.
@@ -10,7 +18,7 @@ A versão integral exportada do notebook, disponível também como \href{run:ape
 
 \includepdf[pages=-,pagecommand={},artifact=false]{apendice_a_pipeline_imu_sensor_optico.pdf}
 
-\section{Processamento da nuvem de pontos global com LiDAR}
+\apendicesection{Processamento da nuvem de pontos global com LiDAR}
 \label{ap:nuvem}
 
 O notebook complementar \path{processamento_nuvem_lidar_global.ipynb} recebe a posição e a atitude associadas aos retornos LiDAR, aplica os critérios físicos e estatísticos, transforma os pontos para o referencial global relativo e exporta \path{nuvem_pontos_lidar_global.csv}. O mesmo material gera as visualizações \path{nuvem_global_3d.png} e \path{nuvem_global_2d.png}, além dos gráficos complementares de filtragem e comparação dimensional inseridos na discussão. Ele deve ser executado depois do notebook de posição e atitude, preferencialmente no mesmo ambiente virtual \path{.venv}.
@@ -21,8 +29,7 @@ A versão integral exportada do notebook, disponível também como \href{run:ape
 
 \includepdf[pages=-,pagecommand={},artifact=false]{apendice_b_processamento_nuvem_lidar.pdf}
 
-\clearpage
-\section{Rotina embarcada de aquisição dos sensores}
+\apendicesection{Rotina embarcada de aquisição dos sensores}
 \label{ap:arduino}
 
 O firmware de aquisição utilizado na plataforma está disponível em \path{arduino/Completo_v2_1/Completo_v2_1.ino}. Ele reúne a leitura das duas IMUs MPU-6050, do ToF VL53L1X, do sensor óptico PMW3901, do LiDAR LD06 e do cartão SD. A rotina organiza os dados em formato CSV, registra a referência temporal comum em microssegundos e usa a chegada de pacotes do LiDAR como evento de gravação.

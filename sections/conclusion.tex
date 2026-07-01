@@ -5,16 +5,20 @@
 
 O ensaio confirmou a operação conjunta dos sensores durante 52,07~s. Dos 6.241 registros LiDAR, foram identificados 521 timestamps distintos para a estimação de posição e atitude. A associação posterior preservou todos os retornos e atribuiu a cada um deles uma posição horizontal e uma atitude. A trajetória processada alcançou aproximadamente 7,19~m no eixo longitudinal, valor compatível com a ordem de grandeza do percurso de 7,00~m, embora essa comparação isolada não constitua erro de posição ponto a ponto.
 
-A estratégia de usar o fluxo óptico como referência de deslocamento evitou que toda a trajetória dependesse da integração inercial. As IMUs permaneceram essenciais para orientar a varredura LiDAR e para dar continuidade aos intervalos curtos sem atualização óptica. O painel da Figura~\ref{fig:resumo_navegacao} reúne os sinais usados nessa etapa e permite verificar a relação temporal entre distância ToF, eventos ópticos, atitude, aceleração linear e trajetória final. A geração desse painel decorre diretamente do processamento apresentado no Apêndice~\ref{ap:posicao}, que documenta a filtragem dos sinais, a estimação por quaternions, a correção do fluxo óptico pelo ToF e a associação final com os instantes do LiDAR.
+A estratégia de usar o fluxo óptico como referência de deslocamento evitou que toda a trajetória dependesse da integração inercial. As IMUs permaneceram essenciais para orientar a varredura LiDAR e para dar continuidade aos intervalos curtos sem atualização óptica. O painel da Figura~\ref{fig:resumo_navegacao} reúne os sinais usados nessa etapa. Sua geração decorre diretamente do processamento apresentado no Apêndice~\ref{ap:posicao}, que documenta a filtragem dos sinais, a estimação por quaternions, a correção do fluxo óptico pelo ToF e a associação final com os instantes do LiDAR.
 
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.96\textwidth]{imu_flow_summary.png}
-    \caption{Resumo do processamento de navegação relativa, incluindo ToF, fluxo óptico, atitude, aceleração linear e trajetória horizontal.}
+    \caption{Resumo do processamento de navegação relativa. De cima para baixo, são apresentados o ToF e a odometria óptica, os ângulos de Euler, a aceleração linear, a comparação entre as posições óptica e fusionada, a fonte de posição usada em cada amostra e a trajetória no plano horizontal.}
     \label{fig:resumo_navegacao}
 \end{figure}
 
-As pequenas oscilações observadas na trajetória são esperadas em uma estimativa relativa desse tipo. Elas podem ser explicadas pela quantização dos incrementos do sensor óptico, pelas variações de escala associadas ao ToF, pela propagação curta da IMU nos intervalos sem atualização óptica e pela sensibilidade da rotação estimada ao ruído dos giroscópios. Ainda assim, a trajetória mantém formato aproximadamente retilíneo e comprimento compatível com o corredor, o que sugere coerência geométrica global do pipeline. Essa coerência não equivale a validação absoluta, pois não havia uma trajetória de referência para comparar cada ponto estimado.
+No painel superior esquerdo, o ToF permanece em torno da distância nominal de 90~mm durante a maior parte do ensaio, com oscilações de poucos milímetros e uma elevação mais evidente nos segundos finais. O sinal, portanto, forneceu uma correção de escala variável, mas aproximadamente estável, para o fluxo óptico; ele não foi interpretado como posição vertical. No painel superior direito, a odometria óptica cresce predominantemente em $Y$, até cerca de 7,19~m, enquanto $X$ termina próximo de 0,24~m. Esse contraste confirma que o movimento medido foi majoritariamente longitudinal e que o deslocamento transversal acumulado foi pequeno em relação ao percurso principal.
+
+O gráfico dos ângulos de Euler mostra que \textit{roll} permaneceu próximo de $-14^\circ$ durante grande parte da coleta, enquanto \textit{pitch} oscilou em torno de poucos graus e \textit{yaw} apresentou mudanças graduais e por patamares, alcançando aproximadamente $-10^\circ$ ao final. Os valores absolutos incluem a orientação inicial da montagem; mais importante para a reconstrução são suas variações ao longo do tempo. Em particular, a evolução do \textit{yaw} ajuda a explicar por que a projeção transversal dos retornos LiDAR é mais sensível que o deslocamento longitudinal. No gráfico seguinte, as acelerações lineares permanecem majoritariamente próximas de zero, mas contêm oscilações e transitórios, incluindo um pico isolado em $a_y$ por volta de 27~s. Esse comportamento sustenta a decisão de restringir a integração inercial aos intervalos entre atualizações ópticas, em vez de usá-la como fonte acumulativa principal de posição.
+
+Na comparação temporal de posição, as curvas fusionadas acompanham de perto as curvas do fluxo óptico; a diferença entre elas aparece apenas na interpolação dos intervalos sem novos eventos. O gráfico de seleção da fonte mostra eventos ópticos esparsos entre trechos dominados pelo \textit{dead reckoning} inercial: 18,7\% das amostras continham atualização do fluxo e 81,3\% usaram a propagação entre eventos. Isso não significa que a IMU determinou a escala global, pois cada trecho propagado foi novamente ancorado nas posições fornecidas pelo fluxo óptico. Por fim, a trajetória no plano $XY$ apresenta avanço quase retilíneo em $Y$, com pequena excursão em $X$. As oscilações locais podem ser associadas à quantização dos incrementos ópticos, às variações de escala do ToF, à propagação inercial nos intervalos sem atualização e ao ruído da atitude. Em conjunto, os painéis indicam continuidade temporal e coerência global do pipeline, mas não constituem validação absoluta, pois não havia uma trajetória de referência para comparação ponto a ponto.
 
 O ambiente de ensaio usou iluminação artificial. Sensores de fluxo óptico dependem de textura e contraste da superfície observada; portanto, regiões homogêneas, escuras, reflexivas ou com baixa textura tendem a reduzir a confiabilidade dos incrementos ópticos \parencite{lucasKanade1981,pixart2017pmw3901}. No caso do LiDAR, por se tratar de um sensor ativo de tempo de voo, a iluminação ambiente não é necessariamente o fator dominante; contudo, geometria de incidência, distância, reflectância da superfície e intensidade do retorno influenciam a qualidade dos pontos aceitos pelo filtro \parencite{ldrobot2019ld06}. Assim, a iluminação deve ser interpretada como um fator experimental relevante para o sensor óptico e como uma condição secundária, mas não irrelevante, para a qualidade geral da nuvem.
 
@@ -183,7 +187,7 @@ experimental mensurável, não como hipótese simplificadora. Assumir rotação
 identidade e translação nula entre LiDAR e corpo foi suficiente para testar o
 encadeamento de dados; porém, pequenos desalinhamentos físicos, quando
 propagados ao longo de toda a trajetória, produziram dispersão perceptível na
-nuvem --- especialmente na direção transversal, que é mais sensível a erros
+nuvem, especialmente na direção transversal, que é mais sensível a erros
 angulares. Fixação mais rígida dos sensores, registro dos eixos e medida
 direta dos deslocamentos entre dispositivos são necessários antes de comparar
 versões de filtros ou de interpretar métricas dimensionais.
@@ -255,8 +259,8 @@ calibração, robustez mecânica, validação externa e integração em voo.
 
 Os próximos passos prioritários decorrem diretamente das limitações
 identificadas. A medição da transformação extrínseca entre sensores e a
-adição de uma referência externa de orientação --- como magnetômetro ou
-câmera de rastreamento --- são as intervenções com maior potencial de reduzir
+adição de uma referência externa de orientação, como magnetômetro ou
+câmera de rastreamento, são as intervenções com maior potencial de reduzir
 o erro transversal observado, uma vez que a dispersão lateral da nuvem foi
 associada principalmente à propagação de erros de \textit{yaw} e à ausência
 de calibração extrínseca. Em paralelo, recomenda-se repetir o percurso em
